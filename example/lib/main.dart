@@ -272,9 +272,6 @@
 //   }
 // }
 
-
-
-
 import 'dart:io';
 import 'dart:math';
 import 'package:chatbook/chatbook.dart';
@@ -284,7 +281,6 @@ import 'package:giphy_get/giphy_get.dart';
 import 'package:giphy_get/l10n.dart';
 import "package:google_fonts/google_fonts.dart" show GoogleFonts;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 
 Future<void> main() async {
   // WidgetsFlutterBinding.ensureInitialized();
@@ -300,15 +296,11 @@ Future<void> main() async {
 class ChatBookApp extends StatelessWidget {
   const ChatBookApp({Key? key}) : super(key: key);
 
-
-
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-      theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme()
-      ),
-      home:const HomePage() ,
+    return MaterialApp(
+      theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
+      home: const HomePage(),
     );
   }
 }
@@ -321,48 +313,35 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-
-
-
-  final List <TextMessage>_messages = [];
-
+  final List<Message> _messages = [];
 
   @override
   Widget build(BuildContext context) {
-
-          return  Scaffold(
-
-            backgroundColor: const Color(0XFF010101),
-            body: ChatBook(
-              theme: const DefaultChatTheme(),
-              onSendMessage: (String messageText){
-                setState(() {
-                  _messages.insert(0,TextMessage(author: const User(id: ""), id: 'id', text: messageText,createdAt: DateTime.now().microsecondsSinceEpoch,self: true,status: Status.seen));
-                });
-              },
-              messages: _messages,),
-          );
-
-
+    return Scaffold(
+      backgroundColor: const Color(0XFF010101),
+      body: ChatBook(
+        theme: const DefaultChatTheme(),
+        onSendMessage: (String messageText) {
+          setState(() {
+            _messages.insert(
+                0,
+                TextMessage(
+                    author: const User(id: ""),
+                    id: 'id',
+                    text: messageText,
+                    createdAt: DateTime.now().microsecondsSinceEpoch,
+                    self: true,
+                    status: Status.seen));
+          });
+        },
+        messages: _messages,
+        onGiphyPressed: (GiphyGif giphy) {
+         setState(() {
+           _messages.insert(
+               0, GifMessage(author: const User(id: ""), id: 'id', gif: giphy,type: MessageType.gif,createdAt:DateTime.now().microsecondsSinceEpoch,self: true, status: Status.seen ));
+         });
+        },
+      ),
+    );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

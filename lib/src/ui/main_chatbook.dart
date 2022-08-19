@@ -1,15 +1,17 @@
 part of '../../chatbook.dart';
 
 class ChatBook extends StatefulWidget {
-  const ChatBook({
-    Key? key,
-    required this.messages,
-    required this.theme,
-    this.onSendMessage
-  }) : super(key: key);
+  const ChatBook(
+      {Key? key,
+      required this.messages,
+      required this.theme,
+      required this.onGiphyPressed,
+      this.onSendMessage})
+      : super(key: key);
 
-  final List <Message> messages;
+  final List<Message> messages;
   final ChatTheme theme;
+  final void Function(GiphyGif giphy)? onGiphyPressed;
   final void Function(String text)? onSendMessage;
 
   @override
@@ -17,19 +19,17 @@ class ChatBook extends StatefulWidget {
 }
 
 class _ChatBookState extends State<ChatBook> {
-
-
   final ItemScrollController itemScrollController = ItemScrollController();
-  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
 
-  GiphyGif? currentGif = null;
+  GiphyGif? currentGif;
 
   late GiphyClient client;
 
   String randomId = "";
 
   String? giphyApiKey = '';
-
 
   @override
   void initState() {
@@ -44,53 +44,57 @@ class _ChatBookState extends State<ChatBook> {
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    return GiphyGetWrapper(giphy_api_key: giphyApiKey!, builder: (stream,giphyGetWrapper){
-      stream.listen((gif) {
-        setState(() {
-          currentGif = gif;
-        });
-      });
+    return GiphyGetWrapper(
+        giphy_api_key: giphyApiKey!,
+        builder: (stream, giphyGetWrapper) {
+          stream.listen((gif) {
+            widget.onGiphyPressed?.call(gif);
+            setState(() {
+              currentGif = gif;
+            });
+          });
 
+          void onSendMessage(String text) {
+            widget.onSendMessage!(text);
+          }
 
-      void onSendMessage(String text){
-
-         widget.onSendMessage!(text);
-      }
-
-
-    return InheritedChatTheme(
-      theme: widget.theme,
-      child: InheritedMessagesWidget(
-        messages: widget.messages,
-        child: Column(
-          children:
-           <Widget> [
-             Expanded(
-              child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18.00,),
-                  child: MessageList(
-                    controller: itemScrollController,
-                    positionsListener: itemPositionsListener,
-                  ),
+          return InheritedChatTheme(
+            theme: widget.theme,
+            child: InheritedMessagesWidget(
+              messages: widget.messages,
+              child: InheritedGifMessageGetWrapper(
+                 giphyGetWrapper: giphyGetWrapper,
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18.00,
+                        ),
+                        child: MessageList(
+                          controller: itemScrollController,
+                          positionsListener: itemPositionsListener,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ConstrainedBox(
+                        constraints:
+                            const BoxConstraints(maxHeight: 150, minHeight: 50),
+                        child: InputBar(
+                          giphyGetWrapper: giphyGetWrapper,
+                          currentGif: currentGif,
+                          onSendMessage: onSendMessage,
+                        ))
+                  ],
+                ),
               ),
             ),
-             const SizedBox(height: 10,),
-               ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 150 ,minHeight: 50 ),
-                child:  InputBar(
-                  giphyGetWrapper : giphyGetWrapper,
-                  currentGif : currentGif,
-                  onSendMessage: onSendMessage,
-              )
-            )
-          ],
-        ),
-      ),
-    ) ;
-    });
+          );
+        });
   }
 }

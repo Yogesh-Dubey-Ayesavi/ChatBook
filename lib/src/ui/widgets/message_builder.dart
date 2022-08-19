@@ -31,7 +31,7 @@ class _MessageBuilderState extends State<MessageBuilder> {
                       padding: const BubbleEdges.all(0),
                       showNip: _nipGiver(widget.message, widget.prevMessage),
                       nip: widget.message.self == true?BubbleNip.rightTop:BubbleNip.leftTop,
-                      color: widget.message.self == true ? InheritedChatTheme.of(context).theme.sentMessageBubbleColor:InheritedChatTheme.of(context).theme.receivedMessageBubbleColor,
+                      color: _bubbleColorGiver(widget.message),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -69,6 +69,9 @@ class _MessageBuilderState extends State<MessageBuilder> {
     switch(type){
       case MessageType.text:
         return TextMessageWidget(message: message as TextMessage,);
+
+      case MessageType.gif:
+        return GifMessageWidget(message: message as GifMessage);
       default:
         return null;
     }
@@ -123,6 +126,18 @@ class _MessageBuilderState extends State<MessageBuilder> {
           default:
             return const SizedBox();
         }
+    }
+
+    Color _bubbleColorGiver(Message message){
+      if (["text",'audio','video'].contains(message.type.name)){
+        return widget.message.self == true ? InheritedChatTheme.of(context).theme.sentMessageBubbleColor:InheritedChatTheme.of(context).theme.receivedMessageBubbleColor;
+      }
+      else if (message.type.name == 'gif'){
+        return Colors.transparent;
+      }
+      else{
+        return Colors.transparent;
+      }
     }
 
 

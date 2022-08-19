@@ -1,5 +1,6 @@
 library chatbook;
 
+import 'dart:html';
 import 'dart:math';
 
 import 'package:any_link_preview/any_link_preview.dart';
@@ -9,6 +10,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_parsed_text/flutter_parsed_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:giphy_get/giphy_get.dart';
@@ -31,18 +35,16 @@ export './src/models/messageModels/message.dart';
 export './src/models/messageModels/user.dart';
 export './src/ui/theme/default_theme.dart';
 
-
-
 part './src/ui/main_chatbook.dart';
 part './src/ui/widgets/message_list.dart';
 part './src/ui/widgets/message_builder.dart';
 part 'src/ui/theme/inherited_chat_theme.dart';
-part  './src/ui/widgets/text_message_widget.dart';
+part './src/ui/widgets/text_message_widget.dart';
 part './src/utilities/utilities.dart';
-part  './src/ui/widgets/inheritedmessages_widget.dart';
-part './src/ui/widgets/application_input_message_bar.dart';
+part './src/ui/widgets/inheritedmessages_widget.dart';
 part './src/ui/widgets/input_text_field_controller.dart';
 part './src/ui/widgets/pattern_style.dart';
 part './src/ui/widgets/input_bar_widget.dart';
-
+part './src/ui/widgets/gif_message_widget.dart';
+part './src/ui/widgets/inherited_gif_widget.dart';
 
