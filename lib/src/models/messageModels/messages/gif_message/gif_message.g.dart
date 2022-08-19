@@ -22,7 +22,7 @@ GifMessage _$GifMessageFromJson(Map<String, dynamic> json) => GifMessage(
       roomId: json['roomId'] as String?,
       showStatus: json['showStatus'] as bool?,
       status: $enumDecodeNullable(_$StatusEnumMap, json['status']),
-      gif: json['gif'] as String,
+      gif: GiphyGif.fromJson(json['gif'] as Map<String, dynamic>),
       type: $enumDecodeNullable(_$MessageTypeEnumMap, json['type']),
       updatedAt: json['updatedAt'] as int?,
     );

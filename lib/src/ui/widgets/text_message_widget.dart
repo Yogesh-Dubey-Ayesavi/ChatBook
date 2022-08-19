@@ -13,11 +13,11 @@ class TextMessageWidget extends StatefulWidget {
 
 class _TextMessageWidgetState extends State<TextMessageWidget> {
 
-  String link ='';
 
 
   @override
   Widget build(BuildContext context) {
+
 
     final bodyTextStyle = widget.message.self == true ?
               InheritedChatTheme.of(context).theme.sentMessageTextStyle : InheritedChatTheme.of(context).theme.receivedMessageTextStyle;
@@ -30,60 +30,63 @@ class _TextMessageWidgetState extends State<TextMessageWidget> {
 
     RegExp exp =  RegExp(r'(?:(?:https?|ftp):)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
 
-    Iterable<RegExpMatch> matches = exp.allMatches(widget.message.text);
-
-    for (var match   in matches) {
-      setState(() {
-        link = widget.message.text.substring(match.start, match.end);
-      });
+   String?  _urlGiver(String text){
+      String? urlText;
+      Iterable<RegExpMatch> matches = exp.allMatches(text);
+      for (var match in matches) {
+        urlText = (text.substring(match.start, match.end));
+      }
+      return urlText;
     }
 
-
+    _urlGiver(widget.message.text);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AnyLinkPreview.builder(
-              errorWidget: const SizedBox(height: 0,width: 0,),
-              link: link,
-              itemBuilder: (_,metadata,image){
-                return GestureDetector(
-                  onTap: (){
-                       if(metadata.url != null){
-                         launchUrl(Uri.parse(metadata.url!));
-                       }
-                  },
-                  child: Card(
-                    clipBehavior: Clip.hardEdge,
-                    margin: EdgeInsets.zero,
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                     if (image!=null) ...  [
-                       ClipRRect(
-                         borderRadius: const BorderRadius.only(bottomRight: Radius.circular(5),bottomLeft: Radius.circular(5)),
-                         child: Image(image: image),
-                       ),
-                        ],
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
+          if(_urlGiver(widget.message.text) != null)
+                AnyLinkPreview.builder(
+                  placeholderWidget: const SizedBox(height: 0,width: 0,),
+                    errorWidget: const SizedBox(height: 0,width: 0,),
+                    link: _urlGiver(widget.message.text)!,
+                    itemBuilder: (_,metadata,image){
+                      return GestureDetector(
+                        onTap: (){
+                             if(metadata.url != null){
+                               launchUrl(Uri.parse(metadata.url!));
+                             }
+                        },
+                        child: Card(
+                          clipBehavior: Clip.hardEdge,
+                          margin: EdgeInsets.zero,
+                          child:Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(metadata.title!,style: const TextStyle(fontWeight: FontWeight.bold),),
-                              if (metadata.desc!= null && metadata.desc != '' && metadata.desc!='A new Flutter project.')...[
-                                    const SizedBox(height: 10),
-                                    Text(metadata.desc!)
-                              ]
+                           if (image!=null) ...  [
+                             ClipRRect(
+                               borderRadius: const BorderRadius.only(bottomRight: Radius.circular(5),bottomLeft: Radius.circular(5)),
+                               child: Image(image: image),
+                             ),
+                              ],
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(metadata.title!,style: const TextStyle(fontWeight: FontWeight.bold),),
+                                    if (metadata.desc!= null && metadata.desc != '' && metadata.desc!='A new Flutter project.')...[
+                                          const SizedBox(height: 10),
+                                          Text(metadata.desc!)
+                                    ]
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              }
-          ),
+                      );
+                    }
+                ),
           const SizedBox(height: 5,),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),

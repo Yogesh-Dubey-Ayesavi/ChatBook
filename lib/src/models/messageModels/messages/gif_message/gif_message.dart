@@ -1,3 +1,4 @@
+import 'package:giphy_get/giphy_get.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
@@ -42,7 +43,7 @@ abstract class GifMessage extends Message {
     String? roomId,
     bool? showStatus,
     Status? status,
-    required String gif,
+    required GiphyGif gif,
     MessageType? type,
     int? updatedAt,
   }) = _GifMessage;
@@ -57,7 +58,7 @@ abstract class GifMessage extends Message {
   final PreviewData? previewData;
 
   /// User's message.
-  final String gif;
+  final GiphyGif gif;
 
   /// Equatable props.
   @override
@@ -88,7 +89,7 @@ abstract class GifMessage extends Message {
     String? roomId,
     bool? showStatus,
     Status? status,
-    String? gif,
+    GiphyGif? gif,
     int? updatedAt,
   });
 
@@ -129,7 +130,7 @@ class _GifMessage extends GifMessage {
     dynamic roomId,
     dynamic showStatus = _Unset,
     dynamic status = _Unset,
-    String? gif,
+    GiphyGif? gif,
     dynamic updatedAt = _Unset,
   }) =>
       _GifMessage(

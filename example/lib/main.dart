@@ -275,17 +275,32 @@
 
 
 
+import 'dart:io';
 import 'dart:math';
 import 'package:chatbook/chatbook.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:giphy_get/giphy_get.dart';
+import 'package:giphy_get/l10n.dart';
 import "package:google_fonts/google_fonts.dart" show GoogleFonts;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main(){
+
+Future<void> main() async {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // if (!kIsWeb) {
+  //   await dotenv.load(mergeWith: Platform.environment);
+  // } else {
+  //   await dotenv.load();
+  // }
+
   runApp(const ChatBookApp());
 }
 
 class ChatBookApp extends StatelessWidget {
   const ChatBookApp({Key? key}) : super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -307,37 +322,29 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  final List <TextMessage>_messages = [
-    const TextMessage(author: User(id: ""), id: 'id', text: '@my  **https://www.thereverseland.com/** lorem ip ',createdAt: 1092076200000,self: true),
-    const TextMessage(author:  User(id: ""), id: 'id', text: 'my  https://www.youtube.com/watch?v=1Oq9HCIlM1A lorem ip ',createdAt: 1092076200000,self: true),
-    const TextMessage(author:  User(id: ""), id: 'id', text: 'my  https://www.thereverseland.com/ lorem ip ',createdAt: 102078000,self: true)];
 
 
 
-  String generateRandomString(int len) {
-    var r = Random();
-    const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    return List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
-  }
+  final List <TextMessage>_messages = [];
 
-  
+
   @override
   Widget build(BuildContext context) {
 
+          return  Scaffold(
 
-    return  Scaffold(
+            backgroundColor: const Color(0XFF010101),
+            body: ChatBook(
+              theme: const DefaultChatTheme(),
+              onSendMessage: (String messageText){
+                setState(() {
+                  _messages.insert(0,TextMessage(author: const User(id: ""), id: 'id', text: messageText,createdAt: DateTime.now().microsecondsSinceEpoch,self: true,status: Status.seen));
+                });
+              },
+              messages: _messages,),
+          );
 
 
-      backgroundColor: const Color(0XFF010101),
-      body: ChatBook(
-        theme: const DefaultChatTheme(),
-        onSendMessage: (String messageText){
-          setState(() {
-            _messages.add(TextMessage(author: const User(id: ""), id: 'id', text: messageText,createdAt: DateTime.now().microsecondsSinceEpoch,self: true,status: Status.seen));
-          });
-        },
-        messages: _messages,),
-    );
   }
 }
 
