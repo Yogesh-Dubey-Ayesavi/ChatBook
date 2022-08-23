@@ -1,9 +1,13 @@
 library chatbook;
 
-import 'dart:html';
+import 'dart:io';
 import 'dart:math';
-
 import 'package:any_link_preview/any_link_preview.dart';
+import 'package:audio_service/audio_service.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:chatbook/src/audio_service/audiohandler.dart';
+import 'package:chatbook/src/audio_service/notifiers/play_back_button_state_notifier.dart';
+import 'package:chatbook/src/audio_service/notifiers/progress_bar_notifier.dart';
 import 'package:chatbook/src/models/messageModels/message.dart';
 import 'package:chatbook/src/ui/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,12 +19,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_parsed_text/flutter_parsed_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get_it/get_it.dart';
 import 'package:giphy_get/giphy_get.dart';
+import 'package:holding_gesture/holding_gesture.dart';
 import 'package:intl/intl.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:record/record.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:bubble/bubble.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'chatbook.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:developer' as logger ;
+import 'src/audio_service/notifiers/repeat_button_notifier.dart';
 
 export './src/models/messageModels/messages/audio_message/audio_message.dart';
 export './src/models/messageModels/messages/emoji_message/emoji_message.dart';
@@ -41,10 +55,14 @@ part './src/ui/widgets/message_builder.dart';
 part 'src/ui/theme/inherited_chat_theme.dart';
 part './src/ui/widgets/text_message_widget.dart';
 part './src/utilities/utilities.dart';
+part './src/utilities/service_locator.dart';
+part './src/audio_service/audio_helper.dart';
+part './src/audio_service/recorder_helper.dart';
 part './src/ui/widgets/inheritedmessages_widget.dart';
 part './src/ui/widgets/input_text_field_controller.dart';
 part './src/ui/widgets/pattern_style.dart';
 part './src/ui/widgets/input_bar_widget.dart';
+part './src/ui/widgets/audio_message_widget.dart';
 part './src/ui/widgets/gif_message_widget.dart';
 part './src/ui/widgets/inherited_gif_widget.dart';
-
+// part './src/ui/widgets/audio_recorder_widget.dart';

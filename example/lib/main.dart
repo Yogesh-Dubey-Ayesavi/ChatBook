@@ -1,296 +1,22 @@
-// import 'package:example/video_player.dart';
-// import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-// import 'package:video_player/video_player.dart';
-// import 'dart:math';
-// import 'package:flutter/material.dart';
-//
-// const minItemHeight = 20.0;
-// const scrollDuration = Duration(seconds: 1);
-//
-// const randomMax = 25000;
-//
-// void main() {
-//   runApp(ScrollablePositionedListExample());
-// }
-//
-// class ScrollablePositionedListExample extends StatelessWidget {
-//   const ScrollablePositionedListExample({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'ScrollablePositionedList Example',
-//       theme: ThemeData(primarySwatch: Colors.blue),
-//       home: const ScrollablePositionedListPage(),
-//     );
-//   }
-// }
-//
-// class ScrollablePositionedListPage extends StatefulWidget {
-//   const ScrollablePositionedListPage({Key? key}) : super(key: key);
-//
-//   @override
-//   _ScrollablePositionedListPageState createState() => _ScrollablePositionedListPageState();
-// }
-//
-// class _ScrollablePositionedListPageState
-//     extends State<ScrollablePositionedListPage> {
-//   final ItemScrollController itemScrollController = ItemScrollController();
-//   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
-//   late List<Color> itemColors;
-//   List <int> itemsList = <int>[1];
-//   VideoPlayerController _controller = VideoPlayerController.network(
-//       'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4');
-//   bool reversed = false ;
-//   double alignment = 0;
-//   int numberOfItems = 10;
-//   String imgUrl = 'https://static.remove.bg/remove-bg-web/f9c9a2813e0321c04d66062f8cca92aedbefced7/assets/start_remove-c851bdf8d3127a24e2d137a55b1b427378cd17385b01aec6e59d5d4b5f39d2ec.png';
-//
-
-//
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _controller.initialize();
-//
-//     final heightGenerator = Random(328902348);
-//     final colorGenerator = Random(42490823);
-//
-//     itemColors = List<Color>.generate(numberOfItems,
-//             (int _) => Color(colorGenerator.nextInt(randomMax)).withOpacity(1));
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) => Scaffold(
-//     floatingActionButton: Column(
-//       children: [
-//         FloatingActionButton(
-//           onPressed: () {
-//             jumpTo(itemsList.length);
-//           setState(() {
-//             itemsList.add(2);
-//           });
-//         },
-//
-//         ),  FloatingActionButton(
-//           onPressed: () {
-//             setState(() {
-//               scrollTo(Random().nextInt(numberOfItems));
-//             });
-//           },
-//
-//         ),
-//       ],
-//     ),
-//       body: OrientationBuilder(
-//       builder: (context, orientation) => Column(
-//         children: <Widget>[
-//           Expanded(
-//             child: list(orientation),
-//           ),
-//             Row(
-//             children: <Widget>[
-//               Column(
-//                 children: <Widget>[
-//                   scrollControlButtons,
-//                   const SizedBox(height: 10),
-//                   jumpControlButtons,
-//                   alignmentControl,
-//                 ],
-//               ),
-//             ],
-//           )
-//         ],
-//       ),
-//     ),
-//   );
-//
-//   Widget get alignmentControl => Row(
-//     mainAxisSize: MainAxisSize.max,
-//     children: <Widget>[
-//       const Text('Alignment: '),
-//       SizedBox(
-//         width: 200,
-//         child: SliderTheme(
-//           data: SliderThemeData(
-//             showValueIndicator: ShowValueIndicator.always,
-//           ),child: Slider(
-//             value: alignment,
-//             label: alignment.toStringAsFixed(2),
-//             onChanged: (double value) => setState(() => alignment = value),
-//           ),
-//         ),
-//       ),
-//     ],
-//   );
-//
-//   Widget list(Orientation orientation) => ScrollablePositionedList.builder(
-//     itemCount: itemsList.length,
-//         itemBuilder: (context, index) => item(index, orientation),
-//     itemScrollController: itemScrollController,
-//     reverse: reversed,
-//     scrollDirection: Axis.vertical,
-//   );
-//
-//   Widget get positionsView => ValueListenableBuilder<Iterable<ItemPosition>>(
-//     valueListenable: itemPositionsListener.itemPositions,
-//     builder: (context, positions, child) {
-//       int? min;
-//       int? max;
-//       if (positions.isNotEmpty) {
-//
-//         min = positions
-//             .where((ItemPosition position) => position.itemTrailingEdge > 0)
-//             .reduce((ItemPosition min, ItemPosition position) =>
-//         position.itemTrailingEdge < min.itemTrailingEdge
-//             ? position
-//             : min)
-//             .index;
-//
-//         max = positions
-//             .where((ItemPosition position) => position.itemLeadingEdge < 1)
-//             .reduce((ItemPosition max, ItemPosition position) =>
-//         position.itemLeadingEdge > max.itemLeadingEdge
-//             ? position
-//             : max)
-//             .index;
-//       }
-//       return Row(
-//         children: <Widget>[
-//           Expanded(child: Text('First Item: ${min ?? ''}')),
-//           Expanded(child: Text('Last Item: ${max ?? ''}')),
-//           const Text('Reversed: '),
-//           Checkbox(
-//               value: reversed,
-//               onChanged: (bool? value) => setState(() {
-//                 reversed = value!;
-//               }))
-//         ],
-//       );
-//     },
-//   );
-//
-//   Widget get scrollControlButtons => Row(
-//     children: <Widget>[
-//       const Text('scroll to'),
-//       scrollButton(0),
-//       scrollButton(5),
-//       scrollButton(10),
-//       scrollButton(100),
-//       scrollButton(1000),
-//       scrollButton(99809),
-//     ],
-//   );
-//
-//   Widget get jumpControlButtons => Row(
-//     children: <Widget>[
-//       const Text('jump to'),
-//       jumpButton(0),
-//       jumpButton(5),
-//       jumpButton(10),
-//       jumpButton(100),
-//       jumpButton(1000),
-//       jumpButton(229999),
-//     ],
-//   );
-//
-//     Widget _itemProvider(int idx,int i){
-//       if (idx == 1){
-//        return  Stack(
-//          children: [
-//            Image.network(imgUrl),
-//            Text("$i",style: const TextStyle(color: Colors.white54),)
-//          ],
-//        );
-//       }
-//       else if (idx == 0){
-//         return Stack(
-//           children: [
-//             const VideoApp(),
-//             Text("$i",style: const TextStyle(color: Colors.white54),)
-//           ],
-//         );
-//       }
-//       else if  (idx == 2){
-//         return Text(' ${generateRandomString(Random().nextInt(2000))}  ', style: const TextStyle(color: Colors.white),);
-//       }
-//       else {
-//         return const Text("");
-//       }
-//
-//     }
-//
-//   final _scrollButtonStyle = ButtonStyle(
-//     padding: MaterialStateProperty.all(
-//       const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-//     ),
-//     minimumSize: MaterialStateProperty.all(Size.zero),
-//     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-//   );
-//
-//   Widget scrollButton(int value) => TextButton(
-//     key: ValueKey<String>('Scroll$value'),
-//     onPressed: () => scrollTo(value),
-//     child: Text('$value'),
-//     style: _scrollButtonStyle,
-//   );
-//
-//   Widget jumpButton(int value) => TextButton(
-//     key: ValueKey<String>('Jump$value'),
-//     onPressed: () => jumpTo(value),
-//     child: Text('$value'),
-//     style: _scrollButtonStyle,
-//   );
-//
-//   void scrollTo(int index) => itemScrollController.scrollTo(
-//       index: index,
-//       duration: scrollDuration,
-//       curve: Curves.easeInOutCubic,
-//   );
-//
-//   void jumpTo(int index) =>
-//       itemScrollController.jumpTo(index: index, alignment: alignment);
-//
-//   /// Generate item number [i].
-//   Widget item(int i, Orientation orientation) {
-//     return SizedBox(
-//       // height: orientation == Orientation.portrait ? itemHeights[i] : null,
-//       child: Container(
-//         child: Center(
-//             child:_itemProvider(itemsList[i],i)
-//         ),
-//       ),
-//     );
-//   }
-//
-//
-//   @override
-//   void dispose() {
-//     super.dispose();
-//     _controller.dispose();
-//   }
-// }
-
 import 'dart:io';
 import 'dart:math';
 import 'package:chatbook/chatbook.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:giphy_get/giphy_get.dart';
 import 'package:giphy_get/l10n.dart';
 import "package:google_fonts/google_fonts.dart" show GoogleFonts;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 
 Future<void> main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // if (!kIsWeb) {
-  //   await dotenv.load(mergeWith: Platform.environment);
-  // } else {
-  //   await dotenv.load();
-  // }
-
-  runApp(const ChatBookApp());
+  // await JustAudioBackground.init(
+  //   androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+  //   androidNotificationChannelName: 'Audio playback',
+  //   androidNotificationOngoing: true,
+  // );
+  runApp(ChatBookApp());
 }
 
 class ChatBookApp extends StatelessWidget {
@@ -300,7 +26,7 @@ class ChatBookApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
-      home: const HomePage(),
+      home: HomePage(),
     );
   }
 }
@@ -318,9 +44,86 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        backgroundColor: const Color(0Xff010101),
+        flexibleSpace: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.only(right: 16),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    CupertinoIcons.chevron_back,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(
+                  width: 2,
+                ),
+                const CircleAvatar(
+                  // backgroundImage: NetworkImage(
+                  //     "https://randomuser.me/api/portraits/men/5.jpg"
+                  //     ),
+                  maxRadius: 20,
+                ),
+                const SizedBox(
+                  width: 12,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Kriss Benawat",
+                        style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white),
+                      ),
+                      const SizedBox(
+                        height: 6,
+                      ),
+                      Text(
+                        "Online",
+                        style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(
+                    CupertinoIcons.phone,
+                    color: Color.fromRGBO(255, 255, 255, .87),
+                  ),
+                  onPressed: () {},
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                IconButton(
+                  icon: const Icon(
+                    CupertinoIcons.video_camera,
+                    color: Color.fromRGBO(255, 255, 255, .87),
+                  ),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       backgroundColor: const Color(0XFF010101),
       body: ChatBook(
-        theme: const DefaultChatTheme(),
+        giphyApiKey: 'Hbruc2uiEvkJKgCIrZw3n68ukoiycsUu',
         onSendMessage: (String messageText) {
           setState(() {
             _messages.insert(
@@ -335,13 +138,122 @@ class _HomePageState extends State<HomePage> {
           });
         },
         messages: _messages,
+        onPressMic: () {
+          // print("occured");
+          setState(() {
+            _messages.insert(
+                0,
+                AudioMessage(
+                    author: const User(id: ""),
+                    size: 135,
+                    name: 'AudioFile',
+                    self: true,
+                    id: DateTime.now().microsecondsSinceEpoch.toString(),
+                    type: MessageType.audio,
+                    createdAt: DateTime.now().microsecondsSinceEpoch,
+                    uri:
+                        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'));
+          });
+          ;
+        },
+        onMicPressEnded: (path, duration) {
+          setState(() {
+            _messages.insert(
+                0,
+                AudioMessage(
+                    author: const User(id: ""),
+                    size: duration,
+                    name: 'AudioFile',
+                    self: true,
+                    id: DateTime.now().microsecondsSinceEpoch.toString(),
+                    type: MessageType.audio,
+                    createdAt: DateTime.now().microsecondsSinceEpoch,
+                    uri: path));
+          });
+        },
         onGiphyPressed: (GiphyGif giphy) {
-         setState(() {
-           _messages.insert(
-               0, GifMessage(author: const User(id: ""), id: 'id', gif: giphy,type: MessageType.gif,createdAt:DateTime.now().microsecondsSinceEpoch,self: true, status: Status.seen ));
-         });
+          setState(() {
+            _messages.insert(
+                0,
+                GifMessage(
+                    author: const User(id: ""),
+                    id: 'id',
+                    gif: giphy,
+                    type: MessageType.gif,
+                    createdAt: DateTime.now().microsecondsSinceEpoch,
+                    self: true,
+                    status: Status.seen));
+          });
         },
       ),
     );
   }
 }
+
+// import 'dart:async';
+
+// import 'package:flutter/foundation.dart';
+// import 'package:flutter/material.dart';
+// import 'package:record/record.dart';
+
+// void main() => runApp(const MyApp());
+
+// class MyApp extends StatelessWidget {
+//   const MyApp({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: AudioRecorder(),
+//     );
+//   }
+// }
+
+// class AudioRecorder extends StatefulWidget {
+//   const AudioRecorder({Key? key}) : super(key: key);
+
+//   @override
+//   State<AudioRecorder> createState() => _AudioRecorderState();
+// }
+
+// class _AudioRecorderState extends State<AudioRecorder> {
+//   late Record record;
+
+//   @override
+//   void initState() {
+//     record = Record();
+//     super.initState();
+//   }
+
+//   void start() async {
+//     if (await record.hasPermission()) {
+//       await record.start(
+//         path: 'aFullPath/myFile.m4a',
+//         encoder: AudioEncoder.aacLc, // by default
+//         bitRate: 128000, // by default
+//       );
+//     }
+//   }
+
+//   void stop() async {
+//     await record.stop();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Column(children: [
+//         IconButton(
+//             onPressed: () {
+//               start();
+//             },
+//             icon: const Icon(Icons.play_arrow)),
+//         IconButton(
+//             onPressed: () {
+//               stop();
+//             },
+//             icon: const Icon(Icons.play_arrow))
+//       ]),
+//     );
+//   }
+// }

@@ -1,12 +1,13 @@
-part  of '../../../chatbook.dart';
+part of '../../../chatbook.dart';
 
 class InheritedChatTheme extends InheritedWidget {
-  const InheritedChatTheme( {
+  /// It inherits one common theme among all its child widgets.
+
+  const InheritedChatTheme({
     Key? key,
     required Widget child,
-    required ChatTheme this.theme,
+    required this.theme,
   }) : super(key: key, child: child);
-
 
   final ChatTheme theme;
   static InheritedChatTheme of(BuildContext context) {
@@ -18,7 +19,6 @@ class InheritedChatTheme extends InheritedWidget {
 
   @override
   bool updateShouldNotify(InheritedChatTheme old) {
-    return old.theme!= theme ;
+    return old.theme != theme;
   }
-
 }
