@@ -32,7 +32,7 @@ class ChatBook extends StatefulWidget {
   /// Callback for onPressMic event
   final void Function()? onPressMic;
 
-  final void Function(String path,double duration)? onMicPressEnded;
+  final void Function(String path, double duration)? onMicPressEnded;
 
   @override
   State<ChatBook> createState() => _ChatBookState();
@@ -47,6 +47,8 @@ class _ChatBookState extends State<ChatBook> {
   /// Listens for the position of any item.
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
+
+  final TagMessageHelper _tagMessageHelper = TagMessageHelper();
 
   /// It is for holding the selectedGif after onPressedEvent on Gif
   GiphyGif? currentGif;
@@ -112,10 +114,17 @@ class _ChatBookState extends State<ChatBook> {
                     const SizedBox(
                       height: 10,
                     ),
+                    ValueListenableBuilder(
+                        valueListenable: _tagMessageHelper.tagNotifier,
+                        builder: (_, value, __) {
+                          if (value == null) return const SizedBox();
+                          return TaggedMessageIndicator(
+                              message: value as Message);
+                        }),
                     ConstrainedBox(
                         constraints:
                             const BoxConstraints(maxHeight: 150, minHeight: 50),
-                        child: InputBar(
+                        child: InputBar(  
                           giphyGetWrapper: giphyGetWrapper,
                           currentGif: currentGif,
                           onSendMessage: widget.onSendMessage,

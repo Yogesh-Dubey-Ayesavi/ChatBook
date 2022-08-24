@@ -29,42 +29,69 @@ class _MessageBuilderState extends State<MessageBuilder> {
                 LimitedBox(
                   maxWidth: 6.5 / 10 * (MediaQuery.of(context).size.width),
                   child: IntrinsicWidth(
-                    child: Bubble(
-                      padding: const BubbleEdges.all(0),
-                      showNip: _nipGiver(widget.message, widget.prevMessage),
-                      nip: widget.message.self == true
-                          ? BubbleNip.rightTop
-                          : BubbleNip.leftTop,
-                      color: _bubbleColorGiver(widget.message),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _messageProvider(widget.message)!,
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(
-                                      DateFormat.jm().format(
-                                          DateTime.fromMicrosecondsSinceEpoch(
-                                              widget.message.createdAt!)),
-                                      style: widget.message.self == true
-                                          ? InheritedChatTheme.of(context)
-                                              .theme
-                                              .sentTimeTextStyle
-                                          : InheritedChatTheme.of(context)
-                                              .theme
-                                              .receivedTimeTextStyle),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  if (widget.message.self == true)
-                                    _statusProvider(widget.message),
-                                ]),
-                          ),
-                        ],
+                    child: Swipeable(
+                      background: const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Icon(
+                            Icons.share,
+                            size: 10,
+                            color: Colors.white,
+                          )),
+                      secondaryBackground: const Icon(
+                        Icons.share,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                      direction: SwipeDirection.startToEnd,
+                      onSwipe: (dir) {
+                        if (SwipeDirection.startToEnd == dir) {
+                          logger.log("swiped");
+                        }
+                      },
+                      confirmSwipe: (direction) async {
+                        logger.log((SwipeDirection.startToEnd == direction)
+                            .toString());
+                        return SwipeDirection.startToEnd == direction;
+                      },
+                      allowedPointerKinds: const {PointerDeviceKind.mouse},
+                      key: const ValueKey(1),
+                      child: Bubble(
+                        padding: const BubbleEdges.all(0),
+                        showNip: _nipGiver(widget.message, widget.prevMessage),
+                        nip: widget.message.self == true
+                            ? BubbleNip.rightTop
+                            : BubbleNip.leftTop,
+                        color: _bubbleColorGiver(widget.message),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _messageProvider(widget.message)!,
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                        DateFormat.jm().format(
+                                            DateTime.fromMicrosecondsSinceEpoch(
+                                                widget.message.createdAt!)),
+                                        style: widget.message.self == true
+                                            ? InheritedChatTheme.of(context)
+                                                .theme
+                                                .sentTimeTextStyle
+                                            : InheritedChatTheme.of(context)
+                                                .theme
+                                                .receivedTimeTextStyle),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    if (widget.message.self == true)
+                                      _statusProvider(widget.message),
+                                  ]),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

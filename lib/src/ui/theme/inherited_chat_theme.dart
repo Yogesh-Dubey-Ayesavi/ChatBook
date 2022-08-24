@@ -7,9 +7,13 @@ class InheritedChatTheme extends InheritedWidget {
     Key? key,
     required Widget child,
     required this.theme,
+    // required this.messages,
+    // required this.giphyGetWrapper,
   }) : super(key: key, child: child);
 
   final ChatTheme theme;
+  // final GiphyGetWrapper giphyGetWrapper;
+  // final List<Message> messages;
   static InheritedChatTheme of(BuildContext context) {
     final InheritedChatTheme? result =
         context.dependOnInheritedWidgetOfExactType<InheritedChatTheme>();

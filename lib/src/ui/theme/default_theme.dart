@@ -5,7 +5,9 @@ import 'theme.dart';
 
 class DefaultChatTheme extends ChatTheme {
   const DefaultChatTheme(
-      {super.receivedMessageBodyCodeTextStyle,
+      {super.tagMessageTextStyle = const TextStyle(color: Colors.white),
+      super.messageInputColor = const Color(0XFF191919),
+      super.receivedMessageBodyCodeTextStyle,
       super.sentMessageBodyCodeTextStyle,
       super.sentTimeTextStyle =
           const TextStyle(color: Colors.grey, fontSize: 10),

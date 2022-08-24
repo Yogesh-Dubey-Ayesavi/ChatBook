@@ -92,7 +92,7 @@ class _InputBarState extends State<InputBar> {
 
     return Container(
       width: double.infinity,
-      color: const Color(0XFF191919),
+      color: InheritedChatTheme.of(context).theme.messageInputColor,
       child: Row(
         children: [
           IconButton(
