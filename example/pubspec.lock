@@ -838,6 +838,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.0"
+  swipe_to_action:
+    dependency: transitive
+    description:
+      name: swipe_to_action
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   synchronized:
     dependency: transitive
     description:

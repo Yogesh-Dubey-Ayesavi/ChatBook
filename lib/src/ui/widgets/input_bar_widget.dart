@@ -14,7 +14,7 @@ class InputBar extends StatefulWidget {
   final void Function()? onPressMic;
   final GiphyGif? currentGif;
   final GiphyGetWrapper giphyGetWrapper;
-  final void Function(String path,int duration)? onMicPressEnded;
+  final void Function(String path, double duration)? onMicPressEnded;
   @override
   State<InputBar> createState() => _InputBarState();
 }
@@ -108,7 +108,8 @@ class _InputBarState extends State<InputBar> {
                 onKey: (event) {
                   if (kIsWeb &&
                       event.isControlPressed &&
-                      event.isKeyPressed(LogicalKeyboardKey.enter)) {
+                      event.isKeyPressed(LogicalKeyboardKey.enter) &&
+                      _controller.text.trim() != '') {
                     _handleSendPressed(_controller.text.trim());
                   } else if (kIsWeb &&
                       event.isAltPressed &&
@@ -156,22 +157,34 @@ class _InputBarState extends State<InputBar> {
                     Icons.send,
                     color: Colors.white,
                   ))
-              : HoldDetector(
-                  onHold: () {
-                    _recorderHelper.isRecording().then((value) => {
-                          if (!value) {_recorderHelper.startRecorder()}
-                        });
-                  },
-                  holdTimeout: const Duration(milliseconds: 300),
-                  onCancel: () {
-                    _recorderHelper.stop().then((map) => {
-                          if (map!["path"] != null) {widget.onMicPressEnded?.call(map['path'],map['duration'])}
-                        });
-                  },
-                  child: const Icon(
-                    Icons.mic,
-                    color: Colors.white,
-                  ))
+              : Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: HoldDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () async {
+                        _recorderHelper.getPermission();
+                      },
+                      onHold: () {
+                        _recorderHelper.isRecording().then((value) => {
+                              if (!value) {_recorderHelper.startRecorder()}
+                            });
+                      },
+                      holdTimeout: const Duration(milliseconds: 300),
+                      onCancel: () {
+                        logger.log("press Cancelled");
+                        _recorderHelper.stop().then((map) => {
+                              if (map!["path"] != null && map['duration'] != 0)
+                                {
+                                  widget.onMicPressEnded
+                                      ?.call(map['path'], map['duration'])
+                                }
+                            });
+                      },
+                      child: const Icon(
+                        Icons.mic,
+                        color: Colors.white,
+                      )),
+                )
         ],
       ),
     );

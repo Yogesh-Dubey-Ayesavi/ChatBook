@@ -7,7 +7,7 @@ class RecorderHelper {
   final recordStateNotifier = ValueNotifier<RecordState>(RecordState.stop);
   final amplitudeNotifier =
       ValueNotifier<Amplitude>(Amplitude(current: 0, max: 0));
-  final timerNotifier = ValueNotifier<int>(0);
+  final timerNotifier = ValueNotifier<double>(0);
   StreamSubscription<Amplitude>? amplitudeSub;
 
   void init() {
@@ -25,7 +25,7 @@ class RecorderHelper {
     try {
       timerNotifier.value = 0;
 
-      if (await _audioRecorder.hasPermission()) {
+      if (await getPermission()) {
         // We don't do anything with this but printing
         final isSupported = await _audioRecorder.isEncoderSupported(
           AudioEncoder.aacLc,
@@ -45,6 +45,10 @@ class RecorderHelper {
         print(e);
       }
     }
+  }
+
+  Future<bool> getPermission() async {
+    return await _audioRecorder.hasPermission();
   }
 
   Future<Map<String, dynamic>?> stop() async {

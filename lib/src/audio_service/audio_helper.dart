@@ -11,8 +11,10 @@ class AudioHelper {
   // Events: Calls coming from the UI
   void init(url) async {
     _audioPlayer = AudioPlayer();
-    await _audioPlayer.setUrl(url);
-
+    print(url);
+    await _audioPlayer
+        .setAudioSource(AudioSource.uri(Uri.parse(url)))
+        .then((value) => print("audio:$value"));
     _audioPlayer.positionStream.listen((position) {
       final oldState = progressNotifier.value;
       progressNotifier.value = ProgressBarState(

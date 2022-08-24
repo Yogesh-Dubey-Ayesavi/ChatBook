@@ -89,14 +89,20 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
     return ValueListenableBuilder<ProgressBarState>(
       valueListenable: _audioHelper.progressNotifier,
       builder: (_, value, __) {
-        return SizedBox(
-          child: ProgressBar(
+        // logger.log("value : ${value.current.inSeconds as double}");
+        // logger.log("max : ${widget.message.size as double}");
+        // logger.log("min: 0.00");
+        // return SizedBox(
+        //   child: Slider(
+        //       min: 0.00,
+        //       value: value.current.inSeconds.round() as double,
+        //       max: widget.message.size.round() as double,
+        //       onChanged: (a) {}),
+        // );
+      
+        return ProgressBar(
             progress: value.current,
-            buffered: value.buffered,
-            total: intToDurationFormatter(widget.message.size as int),
-            onSeek: _audioHelper.seek,
-          ),
-        );
+            total: intToDurationFormatter(widget.message.size as double));
       },
     );
   }

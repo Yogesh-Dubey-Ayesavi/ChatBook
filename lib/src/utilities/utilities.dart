@@ -20,10 +20,10 @@ bool sameDay(int firstStamp, int? secondStamp) {
   }
 }
 
-Duration intToDurationFormatter(int duration) {
-  int h, m, s;
-  h = duration ~/ 3600;
-  m = ((duration - h * 3600)) ~/ 60;
+Duration intToDurationFormatter(double duration) {
+  double h, m, s;
+  h = duration ~/ 3600 as double;
+  m = ((duration - h * 3600)) ~/ 60 as double;
   s = duration - (h * 3600) - (m * 60);
-  return Duration(seconds: s, minutes: m, hours: h);
+  return Duration(seconds: s as int, minutes: m as int, hours: h as int);
 }

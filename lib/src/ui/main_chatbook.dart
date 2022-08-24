@@ -32,7 +32,7 @@ class ChatBook extends StatefulWidget {
   /// Callback for onPressMic event
   final void Function()? onPressMic;
 
-  final void Function(String path,int duration)? onMicPressEnded;
+  final void Function(String path,double duration)? onMicPressEnded;
 
   @override
   State<ChatBook> createState() => _ChatBookState();
