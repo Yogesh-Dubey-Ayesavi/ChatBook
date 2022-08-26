@@ -7,7 +7,7 @@ class RecorderHelper {
   final recordStateNotifier = ValueNotifier<RecordState>(RecordState.stop);
   final amplitudeNotifier =
       ValueNotifier<Amplitude>(Amplitude(current: 0, max: 0));
-  final timerNotifier = ValueNotifier<double>(0);
+  final timerNotifier = ValueNotifier<int>(0);
   StreamSubscription<Amplitude>? amplitudeSub;
 
   void init() {

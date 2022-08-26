@@ -25,7 +25,7 @@ class ChatBookApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
+      // theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
       home: HomePage(),
     );
   }
@@ -39,8 +39,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Message> _messages = [];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,137 +121,12 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: const Color(0XFF010101),
       body: ChatBook(
+        author: const User(id: "1"),
         giphyApiKey: 'Hbruc2uiEvkJKgCIrZw3n68ukoiycsUu',
-        onSendMessage: (String messageText) {
-          setState(() {
-            _messages.insert(
-                0,
-                TextMessage(
-                    author: const User(id: ""),
-                    id: 'id',
-                    text: messageText,
-                    createdAt: DateTime.now().microsecondsSinceEpoch,
-                    self: true,
-                    status: Status.seen));
-          });
-        },
-        messages: _messages,
-        onPressMic: () {
-          // print("occured");
-          setState(() {
-            _messages.insert(
-                0,
-                AudioMessage(
-                    author: const User(id: ""),
-                    size: 135,
-                    name: 'AudioFile',
-                    self: true,
-                    id: DateTime.now().microsecondsSinceEpoch.toString(),
-                    type: MessageType.audio,
-                    createdAt: DateTime.now().microsecondsSinceEpoch,
-                    uri:
-                        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'));
-          });
-          ;
-        },
-        onMicPressEnded: (path, duration) {
-          setState(() {
-            _messages.insert(
-                0,
-                AudioMessage(
-                    author: const User(id: ""),
-                    size: duration,
-                    name: 'AudioFile',
-                    self: true,
-                    id: DateTime.now().microsecondsSinceEpoch.toString(),
-                    type: MessageType.audio,
-                    createdAt: DateTime.now().microsecondsSinceEpoch,
-                    uri: path));
-          });
-        },
-        onGiphyPressed: (GiphyGif giphy) {
-          setState(() {
-            _messages.insert(
-                0,
-                GifMessage(
-                    author: const User(id: ""),
-                    id: 'id',
-                    gif: giphy,
-                    type: MessageType.gif,
-                    createdAt: DateTime.now().microsecondsSinceEpoch,
-                    self: true,
-                    status: Status.seen));
-          });
+        onSendMessage: (Message message) {
+          // print(message.self);
         },
       ),
     );
   }
 }
-
-// import 'dart:async';
-
-// import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart';
-// import 'package:record/record.dart';
-
-// void main() => runApp(const MyApp());
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: AudioRecorder(),
-//     );
-//   }
-// }
-
-// class AudioRecorder extends StatefulWidget {
-//   const AudioRecorder({Key? key}) : super(key: key);
-
-//   @override
-//   State<AudioRecorder> createState() => _AudioRecorderState();
-// }
-
-// class _AudioRecorderState extends State<AudioRecorder> {
-//   late Record record;
-
-//   @override
-//   void initState() {
-//     record = Record();
-//     super.initState();
-//   }
-
-//   void start() async {
-//     if (await record.hasPermission()) {
-//       await record.start(
-//         path: 'aFullPath/myFile.m4a',
-//         encoder: AudioEncoder.aacLc, // by default
-//         bitRate: 128000, // by default
-//       );
-//     }
-//   }
-
-//   void stop() async {
-//     await record.stop();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Column(children: [
-//         IconButton(
-//             onPressed: () {
-//               start();
-//             },
-//             icon: const Icon(Icons.play_arrow)),
-//         IconButton(
-//             onPressed: () {
-//               stop();
-//             },
-//             icon: const Icon(Icons.play_arrow))
-//       ]),
-//     );
-//   }
-// }

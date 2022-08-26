@@ -23,7 +23,6 @@ GifMessage _$GifMessageFromJson(Map<String, dynamic> json) => GifMessage(
       showStatus: json['showStatus'] as bool?,
       status: $enumDecodeNullable(_$StatusEnumMap, json['status']),
       gif: GiphyGif.fromJson(json['gif'] as Map<String, dynamic>),
-      type: $enumDecodeNullable(_$MessageTypeEnumMap, json['type']),
       updatedAt: json['updatedAt'] as int?,
     );
 
@@ -38,7 +37,6 @@ Map<String, dynamic> _$GifMessageToJson(GifMessage instance) =>
       'roomId': instance.roomId,
       'showStatus': instance.showStatus,
       'status': _$StatusEnumMap[instance.status],
-      'type': _$MessageTypeEnumMap[instance.type]!,
       'updatedAt': instance.updatedAt,
       'self': instance.self,
       'previewData': instance.previewData,
@@ -51,18 +49,4 @@ const _$StatusEnumMap = {
   Status.seen: 'seen',
   Status.sending: 'sending',
   Status.sent: 'sent',
-};
-
-const _$MessageTypeEnumMap = {
-  MessageType.custom: 'custom',
-  MessageType.file: 'file',
-  MessageType.image: 'image',
-  MessageType.system: 'system',
-  MessageType.text: 'text',
-  MessageType.unsupported: 'unsupported',
-  MessageType.audio: 'audio',
-  MessageType.video: 'video',
-  MessageType.emoji: 'emoji',
-  MessageType.gif: 'gif',
-  MessageType.location: 'location',
 };

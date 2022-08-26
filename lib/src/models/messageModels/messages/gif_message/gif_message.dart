@@ -33,7 +33,7 @@ abstract class GifMessage extends Message {
 
   const factory GifMessage({
     required User author,
-    bool?self,
+    bool? self,
     int? createdAt,
     required String id,
     Map<String, dynamic>? metadata,
@@ -44,15 +44,12 @@ abstract class GifMessage extends Message {
     bool? showStatus,
     Status? status,
     required GiphyGif gif,
-    MessageType? type,
     int? updatedAt,
   }) = _GifMessage;
 
   /// Creates a gif message from a map (decoded JSON).
   factory GifMessage.fromJson(Map<String, dynamic> json) =>
       _$GifMessageFromJson(json);
-
-
 
   /// See [PreviewData].
   final PreviewData? previewData;
@@ -63,23 +60,23 @@ abstract class GifMessage extends Message {
   /// Equatable props.
   @override
   List<Object?> get props => [
-    author,
-    createdAt,
-    id,
-    metadata,
-    previewData,
-    remoteId,
-    repliedMessage,
-    roomId,
-    status,
-    gif,
-    updatedAt,
-  ];
+        author,
+        createdAt,
+        id,
+        metadata,
+        previewData,
+        remoteId,
+        repliedMessage,
+        roomId,
+        status,
+        gif,
+        updatedAt,
+      ];
 
   @override
   Message copyWith({
     User? author,
-    bool?self,
+    bool? self,
     int? createdAt,
     String? id,
     Map<String, dynamic>? metadata,
@@ -113,14 +110,13 @@ class _GifMessage extends GifMessage {
     super.showStatus,
     super.status,
     required super.gif,
-    super.type,
     super.updatedAt,
-  }) : super._();
+  }) : super._(type: MessageType.gif);
 
   @override
   Message copyWith({
     User? author,
-    bool?self,
+    bool? self,
     dynamic createdAt = _Unset,
     String? id,
     dynamic metadata = _Unset,
@@ -149,9 +145,8 @@ class _GifMessage extends GifMessage {
             : repliedMessage as Message?,
         roomId: roomId == _Unset ? this.roomId : roomId as String?,
         showStatus:
-        showStatus == _Unset ? this.showStatus : showStatus as bool?,
-        self:
-        self == _Unset ? this.self : self as bool?,
+            showStatus == _Unset ? this.showStatus : showStatus as bool?,
+        self: self == _Unset ? this.self : self as bool?,
         status: status == _Unset ? this.status : status as Status?,
         gif: gif ?? this.gif,
         updatedAt: updatedAt == _Unset ? this.updatedAt : updatedAt as int?,

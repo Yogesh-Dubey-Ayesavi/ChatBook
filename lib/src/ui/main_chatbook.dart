@@ -3,42 +3,34 @@ part of '../../chatbook.dart';
 /// This is the entry point of the [ChatBook] package.
 
 class ChatBook extends StatefulWidget {
-  const ChatBook(
-      {Key? key,
-      required this.messages,
-      required this.onGiphyPressed,
-      this.theme = const DefaultChatTheme(),
-      this.onSendMessage,
-      this.giphyApiKey,
-      this.onPressMic,
-      this.onMicPressEnded})
-      : super(key: key);
+  const ChatBook({
+    Key? key,
+    required this.author,
+    required this.onSendMessage,
+    this.theme = const DefaultChatTheme(),
+    this.giphyApiKey,
+  }) : super(key: key);
 
   /// List of messages from which messagefor [Ayesavi ChatBook] will be retrieved by default this field is provided [DefaultChatTheme]
-  final List<Message> messages;
 
   /// Theme assigned to ChatBook for info see [ChatTheme]
   final ChatTheme theme;
 
-  /// Callback for onPress event on giphy or emoji.
-  final void Function(GiphyGif giphy)? onGiphyPressed;
-
   /// callback for onPress event on sendMessageButton in inputbar [InputBar]
-  final void Function(String text)? onSendMessage;
+  final void Function(Message currentMessage) onSendMessage;
 
   /// GiphyApiKey required to retrieve giphy from servers.
   final String? giphyApiKey;
 
-  /// Callback for onPressMic event
-  final void Function()? onPressMic;
-
-  final void Function(String path, double duration)? onMicPressEnded;
+  final User author;
 
   @override
   State<ChatBook> createState() => _ChatBookState();
 }
 
 class _ChatBookState extends State<ChatBook> {
+  final List<Message> _messages = [];
+
   /// Initialising ItemScrollController
   /// It is needed for jumpTo and scrollTo methods to reach any particular item
   final ItemScrollController itemScrollController = ItemScrollController();
@@ -51,7 +43,6 @@ class _ChatBookState extends State<ChatBook> {
   final TagMessageHelper _tagMessageHelper = TagMessageHelper();
 
   /// It is for holding the selectedGif after onPressedEvent on Gif
-  GiphyGif? currentGif;
 
   /// GiphyCient is later initilising the [GiphyClient] in the [initState] method.
   late GiphyClient client;
@@ -77,6 +68,17 @@ class _ChatBookState extends State<ChatBook> {
     }
   }
 
+  void onPressSend(
+    Message sendingMessage,
+  ) {
+    setState(() {
+      _messages.insert(0, sendingMessage);
+    });
+    widget.onSendMessage.call(sendingMessage.copyWith(
+      self: false,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return GiphyGetWrapper(
@@ -85,54 +87,58 @@ class _ChatBookState extends State<ChatBook> {
         giphy_api_key: widget.giphyApiKey!,
         builder: (stream, giphyGetWrapper) {
           stream.listen((gif) {
-            widget.onGiphyPressed?.call(gif);
-            setState(() {
-              currentGif = gif;
-            });
+            // widget.onGiphyPressed?.call(gif);
+            onPressSend(GifMessage(
+                author: const User(id: ""),
+                id: '',
+                gif: gif,
+                createdAt: DateTime.now().millisecondsSinceEpoch,
+                self: true,
+                status: Status.seen));
           });
 
-          return InheritedChatTheme(
+          return InheritedProperties(
+            tagHelper: _tagMessageHelper,
             theme: widget.theme,
+            giphyGetWrapper: giphyGetWrapper,
+            author: widget.author,
             //* Needed for inheriting acess of messages to all its child widgets.
             child: InheritedMessagesWidget(
-              messages: widget.messages,
-              child: InheritedGifMessageGetWrapper(
-                giphyGetWrapper: giphyGetWrapper,
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 18.00,
-                        ),
-                        child: MessageList(
-                          controller: itemScrollController,
-                          positionsListener: itemPositionsListener,
-                        ),
+              messages: _messages,
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18.00,
+                      ),
+                      child: MessageList(
+                        controller: itemScrollController,
+                        positionsListener: itemPositionsListener,
                       ),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    ValueListenableBuilder(
-                        valueListenable: _tagMessageHelper.tagNotifier,
-                        builder: (_, value, __) {
-                          if (value == null) return const SizedBox();
-                          return TaggedMessageIndicator(
-                              message: value as Message);
-                        }),
-                    ConstrainedBox(
-                        constraints:
-                            const BoxConstraints(maxHeight: 150, minHeight: 50),
-                        child: InputBar(  
-                          giphyGetWrapper: giphyGetWrapper,
-                          currentGif: currentGif,
-                          onSendMessage: widget.onSendMessage,
-                          onPressMic: widget.onPressMic,
-                          onMicPressEnded: widget.onMicPressEnded,
-                        ))
-                  ],
-                ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  // RepaintBoundary(
+                  // child:
+                  ValueListenableBuilder(
+                      valueListenable: _tagMessageHelper.tagNotifier,
+                      builder: (_, value, __) {
+                        if (value == null) return const SizedBox();
+                        return TaggedMessageIndicator(
+                            message: value as Message);
+                      }),
+                  // ),
+                  ConstrainedBox(
+                      constraints:
+                          const BoxConstraints(maxHeight: 150, minHeight: 60),
+                      child: InputBar(
+                        giphyGetWrapper: giphyGetWrapper,
+                        onSendMessage: onPressSend,
+                      ))
+                ],
               ),
             ),
           );

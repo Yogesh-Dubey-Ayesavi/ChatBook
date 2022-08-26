@@ -11,7 +11,6 @@ class AudioHelper {
   // Events: Calls coming from the UI
   void init(url) async {
     _audioPlayer = AudioPlayer();
-    print(url);
     await _audioPlayer
         .setAudioSource(AudioSource.uri(Uri.parse(url)))
         .then((value) => print("audio:$value"));

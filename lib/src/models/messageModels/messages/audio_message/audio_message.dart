@@ -85,7 +85,7 @@ abstract class AudioMessage extends Message {
         showStatus: showStatus,
         size: partialAudio.size,
         status: status,
-        type: MessageType.file,
+        type: MessageType.audio,
         updatedAt: updatedAt,
         uri: partialAudio.uri,
       );

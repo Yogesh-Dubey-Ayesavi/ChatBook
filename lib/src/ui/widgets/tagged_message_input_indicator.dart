@@ -12,27 +12,28 @@ class TaggedMessageIndicator extends StatefulWidget {
 
 class _TaggedMessageIndicatorState extends State<TaggedMessageIndicator> {
   Widget _tagTextWidget(BuildContext context, TextMessage message) {
-    return Text(message.text,
-        maxLines: 3,
-        style: InheritedChatTheme.of(context).theme.tagMessageTextStyle);
+    return SizedBox(
+      child: Text(message.text,
+          maxLines: 1,
+          overflow: TextOverflow.fade,
+          style: InheritedProperties.of(context).theme.tagMessageTextStyle),
+    );
   }
 
-  Widget _tagGiphyWidget(GifMessage message) {
+  Widget _tagGiphyWidget(BuildContext context, GifMessage message) {
     return SizedBox(
       child: GiphyGifWidget(
-        imageAlignment: Alignment.centerRight,
         gif: message.gif,
         borderRadius: BorderRadius.circular(6),
-        giphyGetWrapper:
-            InheritedGifMessageGetWrapper.of(context).giphyGetWrapper,
+        giphyGetWrapper: InheritedProperties.of(context).giphyGetWrapper,
         showGiphyLabel: true,
       ),
     );
   }
 
-  Widget _tagAudioWidget(TextMessage message) {
+  Widget _tagAudioWidget(BuildContext context, AudioMessage message) {
     return Text('Audio Message',
-        style: InheritedChatTheme.of(context).theme.tagMessageTextStyle);
+        style: InheritedProperties.of(context).theme.tagMessageTextStyle);
   }
 
   Widget? tagGiver(Message message) {
@@ -52,8 +53,8 @@ class _TaggedMessageIndicatorState extends State<TaggedMessageIndicator> {
         // TODO: Handle this case.
         break;
       case MessageType.audio:
-        // TODO: Handle this case.
-        break;
+        return _tagAudioWidget(context, message as AudioMessage);
+
       case MessageType.video:
         // TODO: Handle this case.
         break;
@@ -61,8 +62,7 @@ class _TaggedMessageIndicatorState extends State<TaggedMessageIndicator> {
         // TODO: Handle this case.
         break;
       case MessageType.gif:
-        // TODO: Handle this case.
-        break;
+        return _tagGiphyWidget(context, message as GifMessage);
       case MessageType.location:
         // TODO: Handle this case.
         break;
@@ -72,13 +72,34 @@ class _TaggedMessageIndicatorState extends State<TaggedMessageIndicator> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
+      width: double.infinity,
+      duration: const Duration(milliseconds: 1000),
       height: 50,
       decoration: BoxDecoration(
-          color: InheritedChatTheme.of(context).theme.messageInputColor,
+          color: InheritedProperties.of(context).theme.messageInputColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0))),
       margin: EdgeInsets.zero,
-      child: tagGiver(widget.message),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Expanded(
+            child: SizedBox(
+          height: 80,
+          child: Card(
+              color: Colors.white30,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: tagGiver(widget.message)!,
+              )),
+        )),
+        IconButton(
+          onPressed: () {
+            InheritedProperties.of(context).tagHelper.disposeTag();
+          },
+          icon: Text(
+            'X',
+            style: InheritedProperties.of(context).theme.sentMessageTextStyle,
+          ),
+        )
+      ]),
     );
   }
 }

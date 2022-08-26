@@ -29,23 +29,25 @@ class _MessageBuilderState extends State<MessageBuilder> {
                 LimitedBox(
                   maxWidth: 6.5 / 10 * (MediaQuery.of(context).size.width),
                   child: IntrinsicWidth(
+                      child: RepaintBoundary(
                     child: Swipeable(
+                      maxOffset: .7,
+                      movementDuration: const Duration(milliseconds: 500),
                       background: const Align(
                           alignment: Alignment.centerLeft,
                           child: Icon(
                             Icons.share,
-                            size: 10,
+                            size: 20,
                             color: Colors.white,
                           )),
-                      secondaryBackground: const Icon(
-                        Icons.share,
-                        size: 40,
-                        color: Colors.white,
-                      ),
                       direction: SwipeDirection.startToEnd,
                       onSwipe: (dir) {
                         if (SwipeDirection.startToEnd == dir) {
                           logger.log("swiped");
+                          InheritedProperties.of(context)
+                              .tagHelper
+                              .tagNotifier
+                              .value = widget.message;
                         }
                       },
                       confirmSwipe: (direction) async {
@@ -53,7 +55,13 @@ class _MessageBuilderState extends State<MessageBuilder> {
                             .toString());
                         return SwipeDirection.startToEnd == direction;
                       },
-                      allowedPointerKinds: const {PointerDeviceKind.mouse},
+                      allowedPointerKinds: const {
+                        PointerDeviceKind.mouse,
+                        PointerDeviceKind.stylus,
+                        PointerDeviceKind.touch,
+                        PointerDeviceKind.trackpad,
+                        PointerDeviceKind.unknown,
+                      },
                       key: const ValueKey(1),
                       child: Bubble(
                         padding: const BubbleEdges.all(0),
@@ -65,7 +73,7 @@ class _MessageBuilderState extends State<MessageBuilder> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _messageProvider(widget.message)!,
+                            _messageProviderWidget(widget.message)!,
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8.0),
@@ -74,13 +82,13 @@ class _MessageBuilderState extends State<MessageBuilder> {
                                   children: [
                                     Text(
                                         DateFormat.jm().format(
-                                            DateTime.fromMicrosecondsSinceEpoch(
+                                            DateTime.fromMillisecondsSinceEpoch(
                                                 widget.message.createdAt!)),
                                         style: widget.message.self == true
-                                            ? InheritedChatTheme.of(context)
+                                            ? InheritedProperties.of(context)
                                                 .theme
                                                 .sentTimeTextStyle
-                                            : InheritedChatTheme.of(context)
+                                            : InheritedProperties.of(context)
                                                 .theme
                                                 .receivedTimeTextStyle),
                                     const SizedBox(
@@ -94,7 +102,7 @@ class _MessageBuilderState extends State<MessageBuilder> {
                         ),
                       ),
                     ),
-                  ),
+                  )),
                 ),
               ],
             ),
@@ -104,7 +112,7 @@ class _MessageBuilderState extends State<MessageBuilder> {
     );
   }
 
-  Widget? _messageProvider(Message message) {
+  Widget? _messageProviderWidget(Message message) {
     MessageType type = message.type;
     switch (type) {
       case MessageType.text:
@@ -139,7 +147,7 @@ class _MessageBuilderState extends State<MessageBuilder> {
         child: Text(
           DateFormat('dd MMM yyyy').format(
               DateTime.fromMicrosecondsSinceEpoch(currentMessage.createdAt!)),
-          style: InheritedChatTheme.of(context).theme.dateHeaderTextStyle,
+          style: InheritedProperties.of(context).theme.dateHeaderTextStyle,
         ),
       );
     } else if (prevMessage == null) {
@@ -148,7 +156,7 @@ class _MessageBuilderState extends State<MessageBuilder> {
         child: Text(
           DateFormat('dd MMM yyyy').format(
               DateTime.fromMicrosecondsSinceEpoch(currentMessage.createdAt!)),
-          style: InheritedChatTheme.of(context).theme.dateHeaderTextStyle,
+          style: InheritedProperties.of(context).theme.dateHeaderTextStyle,
         ),
       );
     } else {
@@ -192,8 +200,8 @@ class _MessageBuilderState extends State<MessageBuilder> {
   Color _bubbleColorGiver(Message message) {
     if (["text", 'audio', 'video'].contains(message.type.name)) {
       return widget.message.self == true
-          ? InheritedChatTheme.of(context).theme.sentMessageBubbleColor
-          : InheritedChatTheme.of(context).theme.receivedMessageBubbleColor;
+          ? InheritedProperties.of(context).theme.sentMessageBubbleColor
+          : InheritedProperties.of(context).theme.receivedMessageBubbleColor;
     } else if (message.type.name == 'gif') {
       return Colors.transparent;
     } else {

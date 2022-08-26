@@ -12,25 +12,25 @@ class TextMessageWidget extends StatefulWidget {
 }
 
 class _TextMessageWidgetState extends State<TextMessageWidget> {
-
-
-
   @override
   Widget build(BuildContext context) {
+    final bodyTextStyle = widget.message.self == true
+        ? InheritedProperties.of(context).theme.sentMessageTextStyle
+        : InheritedProperties.of(context).theme.receivedMessageTextStyle;
 
+    final boldTextStyle = widget.message.self == true
+        ? InheritedProperties.of(context).theme.sentMessageBoldTextStyle
+        : InheritedProperties.of(context).theme.receivedMessageBoldTextStyle;
 
-    final bodyTextStyle = widget.message.self == true ?
-              InheritedChatTheme.of(context).theme.sentMessageTextStyle : InheritedChatTheme.of(context).theme.receivedMessageTextStyle;
+    final codeTextStyle = widget.message.self == true
+        ? InheritedProperties.of(context).theme.sentMessageBodyCodeTextStyle
+        : InheritedProperties.of(context)
+            .theme
+            .receivedMessageBodyCodeTextStyle;
 
-    final boldTextStyle = widget.message.self == true ?
-              InheritedChatTheme.of(context).theme.sentMessageBoldTextStyle : InheritedChatTheme.of(context).theme.receivedMessageBoldTextStyle;
+    RegExp exp = RegExp(r'(?:(?:https?|ftp):)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
 
-    final codeTextStyle = widget.message.self == true?
-              InheritedChatTheme.of(context).theme.sentMessageBodyCodeTextStyle:InheritedChatTheme.of(context).theme.receivedMessageBodyCodeTextStyle;
-
-    RegExp exp =  RegExp(r'(?:(?:https?|ftp):)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
-
-   String?  _urlGiver(String text){
+    String? _urlGiver(String text) {
       String? urlText;
       Iterable<RegExpMatch> matches = exp.allMatches(text);
       for (var match in matches) {
@@ -43,52 +43,68 @@ class _TextMessageWidgetState extends State<TextMessageWidget> {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if(_urlGiver(widget.message.text) != null)
-                AnyLinkPreview.builder(
-                  placeholderWidget: const SizedBox(height: 0,width: 0,),
-                    errorWidget: const SizedBox(height: 0,width: 0,),
-                    link: _urlGiver(widget.message.text)!,
-                    itemBuilder: (_,metadata,image){
-                      return GestureDetector(
-                        onTap: (){
-                             if(metadata.url != null){
-                               launchUrl(Uri.parse(metadata.url!));
-                             }
-                        },
-                        child: Card(
-                          clipBehavior: Clip.hardEdge,
-                          margin: EdgeInsets.zero,
-                          child:Column(
+      children: [
+        if (_urlGiver(widget.message.text) != null)
+          AnyLinkPreview.builder(
+              placeholderWidget: const SizedBox(
+                height: 0,
+                width: 0,
+              ),
+              errorWidget: const SizedBox(
+                height: 0,
+                width: 0,
+              ),
+              link: _urlGiver(widget.message.text)!,
+              itemBuilder: (_, metadata, image) {
+                return GestureDetector(
+                  onTap: () {
+                    if (metadata.url != null) {
+                      launchUrl(Uri.parse(metadata.url!));
+                    }
+                  },
+                  child: Card(
+                    clipBehavior: Clip.hardEdge,
+                    margin: EdgeInsets.zero,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (image != null) ...[
+                          ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                                bottomRight: Radius.circular(5),
+                                bottomLeft: Radius.circular(5)),
+                            child: Image(image: image),
+                          ),
+                        ],
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                           if (image!=null) ...  [
-                             ClipRRect(
-                               borderRadius: const BorderRadius.only(bottomRight: Radius.circular(5),bottomLeft: Radius.circular(5)),
-                               child: Image(image: image),
-                             ),
-                              ],
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(metadata.title!,style: const TextStyle(fontWeight: FontWeight.bold),),
-                                    if (metadata.desc!= null && metadata.desc != '' && metadata.desc!='A new Flutter project.')...[
-                                          const SizedBox(height: 10),
-                                          Text(metadata.desc!)
-                                    ]
-                                  ],
-                                ),
+                              Text(
+                                metadata.title!,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
                               ),
+                              if (metadata.desc != null &&
+                                  metadata.desc != '' &&
+                                  metadata.desc !=
+                                      'A new Flutter project.') ...[
+                                const SizedBox(height: 10),
+                                Text(metadata.desc!)
+                              ]
                             ],
                           ),
                         ),
-                      );
-                    }
-                ),
-          const SizedBox(height: 5,),
-          Padding(
+                      ],
+                    ),
+                  ),
+                );
+              }),
+        const SizedBox(
+          height: 5,
+        ),
+        Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ParsedText(
               selectable: true,
@@ -102,10 +118,11 @@ class _TextMessageWidgetState extends State<TextMessageWidget> {
                       await launchUrl(url);
                     }
                   },
-                  pattern: r'([a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)',
+                  pattern:
+                      r'([a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)',
                   style: const TextStyle(
-                        decoration: TextDecoration.underline,
-                      ),
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
                 MatchText(
                   onTap: (urlText) async {
@@ -123,19 +140,19 @@ class _TextMessageWidgetState extends State<TextMessageWidget> {
                       }
                     }
                   },
-                  pattern: r'((http|ftp|https):\/\/)?([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?',
-                  style:const TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
+                  pattern:
+                      r'((http|ftp|https):\/\/)?([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?',
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
-
                 MatchText(
                   pattern: PatternStyle.bold.pattern,
                   style: boldTextStyle ??
                       bodyTextStyle.merge(PatternStyle.bold.textStyle),
-                  renderText: ({required String str, required String pattern}) =>
-                  {
+                  renderText:
+                      ({required String str, required String pattern}) => {
                     'display': str.replaceAll(
                       PatternStyle.bold.from,
                       PatternStyle.bold.replace,
@@ -145,8 +162,8 @@ class _TextMessageWidgetState extends State<TextMessageWidget> {
                 MatchText(
                   pattern: PatternStyle.italic.pattern,
                   style: bodyTextStyle.merge(PatternStyle.italic.textStyle),
-                  renderText: ({required String str, required String pattern}) =>
-                  {
+                  renderText:
+                      ({required String str, required String pattern}) => {
                     'display': str.replaceAll(
                       PatternStyle.italic.from,
                       PatternStyle.italic.replace,
@@ -155,9 +172,10 @@ class _TextMessageWidgetState extends State<TextMessageWidget> {
                 ),
                 MatchText(
                   pattern: PatternStyle.lineThrough.pattern,
-                  style: bodyTextStyle.merge(PatternStyle.lineThrough.textStyle),
-                  renderText: ({required String str, required String pattern}) =>
-                  {
+                  style:
+                      bodyTextStyle.merge(PatternStyle.lineThrough.textStyle),
+                  renderText:
+                      ({required String str, required String pattern}) => {
                     'display': str.replaceAll(
                       PatternStyle.lineThrough.from,
                       PatternStyle.lineThrough.replace,
@@ -168,8 +186,8 @@ class _TextMessageWidgetState extends State<TextMessageWidget> {
                   pattern: PatternStyle.code.pattern,
                   style: codeTextStyle ??
                       bodyTextStyle.merge(PatternStyle.code.textStyle),
-                  renderText: ({required String str, required String pattern}) =>
-                  {
+                  renderText:
+                      ({required String str, required String pattern}) => {
                     'display': str.replaceAll(
                       PatternStyle.code.from,
                       PatternStyle.code.replace,
@@ -180,35 +198,22 @@ class _TextMessageWidgetState extends State<TextMessageWidget> {
                   pattern: PatternStyle.at.pattern,
                   style: codeTextStyle ??
                       bodyTextStyle.merge(PatternStyle.at.textStyle),
-                  renderText: ({required String str, required String pattern}) =>
-                  {
+                  renderText:
+                      ({required String str, required String pattern}) => {
                     'display': str.replaceAll(
                       PatternStyle.code.from,
                       PatternStyle.code.replace,
                     ),
                   },
                 ),
-
-
-
               ],
-
             )
 
             // SelectableLinkify(text: widget.message.text,onOpen: (element){
             //   _launchInBrowser(Uri.parse(element.url));
             // },),
-          ),
-
-
-        ],
-    ) ;
+            ),
+      ],
+    );
   }
-
-
-
-
-
-
 }
-

@@ -1,31 +1,26 @@
 part of '../../../chatbook.dart';
 
 class InputBar extends StatefulWidget {
-  const InputBar(
-      {Key? key,
-      this.onSendMessage,
-      this.currentGif,
-      this.onPressMic,
-      this.onMicPressEnded,
-      required this.giphyGetWrapper})
+  const InputBar({Key? key, this.onSendMessage, required this.giphyGetWrapper})
       : super(key: key);
 
-  final void Function(String text)? onSendMessage;
-  final void Function()? onPressMic;
-  final GiphyGif? currentGif;
+  final void Function(Message message)? onSendMessage;
   final GiphyGetWrapper giphyGetWrapper;
-  final void Function(String path, double duration)? onMicPressEnded;
   @override
   State<InputBar> createState() => _InputBarState();
 }
 
 class _InputBarState extends State<InputBar> {
   final TextEditingController _controller = InputTextFieldController();
+
+  late FocusNode _focusNode;
+
   bool _isSendButtonVisible = false;
   late RecorderHelper _recorderHelper;
 
   @override
   void initState() {
+    _focusNode = FocusNode();
     _recorderHelper = RecorderHelper();
     _recorderHelper.init();
     _controller.addListener(_handleTextControllerChange);
@@ -39,17 +34,10 @@ class _InputBarState extends State<InputBar> {
     super.dispose();
   }
 
-  void _handleSendPressed(String text) {
-    widget.onSendMessage?.call(text);
+  void _handleSendPressed(Message currentMessage) {
+    widget.onSendMessage?.call(currentMessage);
     _controller.clear();
-  }
-
-  void onGiphyPressed() {
-    if (widget.currentGif != null) {}
-  }
-
-  void onPressMic() {
-    widget.onPressMic?.call();
+    InheritedProperties.of(context).tagHelper.tagNotifier.value = null;
   }
 
   void _handleTextControllerChange() {
@@ -92,7 +80,7 @@ class _InputBarState extends State<InputBar> {
 
     return Container(
       width: double.infinity,
-      color: InheritedChatTheme.of(context).theme.messageInputColor,
+      color: InheritedProperties.of(context).theme.messageInputColor,
       child: Row(
         children: [
           IconButton(
@@ -110,7 +98,17 @@ class _InputBarState extends State<InputBar> {
                       event.isControlPressed &&
                       event.isKeyPressed(LogicalKeyboardKey.enter) &&
                       _controller.text.trim() != '') {
-                    _handleSendPressed(_controller.text.trim());
+                    _handleSendPressed(TextMessage(
+                      author: InheritedProperties.of(context).author,
+                      text: _controller.text.trim(),
+                      id: uuid.v4(),
+                      repliedMessage: InheritedProperties.of(context)
+                          .tagHelper
+                          .tagNotifier
+                          .value,
+                      createdAt: DateTime.now().millisecondsSinceEpoch,
+                      self: true,
+                    ));
                   } else if (kIsWeb &&
                       event.isAltPressed &&
                       event.isKeyPressed(LogicalKeyboardKey.keyS)) {
@@ -125,6 +123,7 @@ class _InputBarState extends State<InputBar> {
                           return _buildTimer();
                         default:
                           return CupertinoTextField(
+                            focusNode: _focusNode,
                             autofocus: true,
                             controller: _controller,
                             placeholder: 'Type a message',
@@ -151,7 +150,17 @@ class _InputBarState extends State<InputBar> {
           _isSendButtonVisible == true
               ? IconButton(
                   onPressed: () {
-                    _handleSendPressed(_controller.text.trim());
+                    _handleSendPressed(TextMessage(
+                      author: InheritedProperties.of(context).author,
+                      text: _controller.text.trim(),
+                      id: uuid.v4(),
+                      repliedMessage: InheritedProperties.of(context)
+                          .tagHelper
+                          .tagNotifier
+                          .value,
+                      createdAt: DateTime.now().millisecondsSinceEpoch,
+                      self: true,
+                    ));
                   },
                   icon: const Icon(
                     Icons.send,
@@ -175,8 +184,22 @@ class _InputBarState extends State<InputBar> {
                         _recorderHelper.stop().then((map) => {
                               if (map!["path"] != null && map['duration'] != 0)
                                 {
-                                  widget.onMicPressEnded
-                                      ?.call(map['path'], map['duration'])
+                                  _handleSendPressed(AudioMessage(
+                                    author:
+                                        InheritedProperties.of(context).author,
+                                    name: "",
+                                    id: uuid.v4(),
+                                    createdAt:
+                                        DateTime.now().millisecondsSinceEpoch,
+                                    uri: map['path'],
+                                    size: 200.00,
+                                    self: true,
+                                    repliedMessage:
+                                        InheritedProperties.of(context)
+                                            .tagHelper
+                                            .tagNotifier
+                                            .value,
+                                  ))
                                 }
                             });
                       },

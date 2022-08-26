@@ -17,7 +17,7 @@ class DefaultChatTheme extends ChatTheme {
       super.receivedMessageBubbleColor =
           const Color.fromRGBO(255, 255, 255, .87),
       super.sentMessageTextStyle =
-          const TextStyle(color: Colors.white, fontSize: 14),
+          const TextStyle(color: Colors.white, fontSize: 16),
       super.receivedMessageTextStyle =
           const TextStyle(color: Colors.black, fontSize: 14),
       super.sentMessageBoldTextStyle,

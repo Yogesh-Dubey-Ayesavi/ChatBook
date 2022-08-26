@@ -16,8 +16,7 @@ class _GifMessageWidgetState extends State<GifMessageWidget> {
         imageAlignment: Alignment.centerRight,
         gif: widget.message.gif,
         borderRadius: BorderRadius.circular(6),
-        giphyGetWrapper:
-            InheritedGifMessageGetWrapper.of(context).giphyGetWrapper,
+        giphyGetWrapper: InheritedProperties.of(context).giphyGetWrapper,
         showGiphyLabel: true,
       ),
     );

@@ -56,7 +56,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
                 onPressed: () {
                   _audioHelper.pause();
                 },
-                color: InheritedChatTheme.of(context)
+                color: InheritedProperties.of(context)
                     .theme
                     .sentMessageTextStyle
                     .color,
@@ -64,7 +64,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
             case ButtonState.paused:
               return IconButton(
                 icon: const Icon(Icons.play_arrow),
-                color: InheritedChatTheme.of(context)
+                color: InheritedProperties.of(context)
                     .theme
                     .sentMessageTextStyle
                     .color,
@@ -99,10 +99,9 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
         //       max: widget.message.size.round() as double,
         //       onChanged: (a) {}),
         // );
-      
+
         return ProgressBar(
-            progress: value.current,
-            total: intToDurationFormatter(widget.message.size as double));
+            progress: value.current, total: const Duration(seconds: 10));
       },
     );
   }
