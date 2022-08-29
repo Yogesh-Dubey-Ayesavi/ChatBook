@@ -22,9 +22,9 @@ class _MessageListState extends State<MessageList> {
   Widget build(BuildContext context) {
     return ScrollablePositionedList.builder(
       reverse: true,
+      minCacheExtent: 6,
       itemScrollController: widget.controller,
       itemPositionsListener: widget.positionsListener,
-      initialScrollIndex: 0,
       itemCount: InheritedMessagesWidget.of(context).messages.length,
       itemBuilder: (_, index) {
         return MessageBuilder(

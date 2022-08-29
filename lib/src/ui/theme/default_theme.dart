@@ -5,7 +5,29 @@ import 'theme.dart';
 
 class DefaultChatTheme extends ChatTheme {
   const DefaultChatTheme(
-      {super.tagMessageTextStyle = const TextStyle(color: Colors.white),
+      {super.headlineTextStyle = const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontFamily: "",
+          fontSize: 30),
+      super.secondaryHeadlineTextStyle = const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontFamily: "Poppins",
+          fontSize: 20),
+      super.labelTextStyle = const TextStyle(
+          fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500),
+      super.captionTextStyle = const TextStyle(
+        fontSize: 14,
+        color: Colors.white,
+        fontWeight: FontWeight.w300,
+      ),
+      super.subtitleTextStyle = const TextStyle(
+        fontSize: 14,
+        color: Colors.grey,
+        fontWeight: FontWeight.w300,
+      ),
+      super.tagMessageTextStyle = const TextStyle(color: Colors.white),
       super.messageInputColor = const Color(0XFF191919),
       super.receivedMessageBodyCodeTextStyle,
       super.sentMessageBodyCodeTextStyle,

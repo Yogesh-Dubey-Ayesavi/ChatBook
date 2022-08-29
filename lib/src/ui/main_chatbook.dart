@@ -29,7 +29,9 @@ class ChatBook extends StatefulWidget {
 }
 
 class _ChatBookState extends State<ChatBook> {
-  final List<Message> _messages = [];
+  final List<Message> _messages = [
+   
+  ];
 
   /// Initialising ItemScrollController
   /// It is needed for jumpTo and scrollTo methods to reach any particular item

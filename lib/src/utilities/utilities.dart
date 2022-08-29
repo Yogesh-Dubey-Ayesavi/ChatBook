@@ -1,13 +1,5 @@
 part of '../../chatbook.dart';
 
-Future<void> _launchInBrowser(Uri url) async {
-  if (!await launchUrl(
-    url,
-    mode: LaunchMode.externalApplication,
-  )) {
-    throw 'Could not launch $url';
-  }
-}
 
 bool sameDay(int firstStamp, int? secondStamp) {
   if (DateFormat('dd MMM yyyy')
@@ -30,3 +22,5 @@ Duration intToDurationFormatter(double duration) {
 
  const Uuid uuid =  Uuid();
 
+ RegExp exp = RegExp(r'(?:(?:https?|ftp):)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
+   

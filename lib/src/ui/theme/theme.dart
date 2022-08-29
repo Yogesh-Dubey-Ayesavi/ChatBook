@@ -19,6 +19,11 @@ abstract class ChatTheme {
   final TextStyle? receivedMessageBodyCodeTextStyle;
   final TextStyle sentTimeTextStyle;
   final TextStyle receivedTimeTextStyle;
+  final TextStyle headlineTextStyle;
+  final TextStyle secondaryHeadlineTextStyle;
+  final TextStyle labelTextStyle;
+  final TextStyle subtitleTextStyle;
+  final TextStyle captionTextStyle;
 
   const ChatTheme({
     required this.chatBackGroundColor,
@@ -32,6 +37,11 @@ abstract class ChatTheme {
     required this.dateHeaderTextStyle,
     required this.sentTimeTextStyle,
     required this.receivedTimeTextStyle,
+    required this.headlineTextStyle,
+    required this.secondaryHeadlineTextStyle,
+    required this.labelTextStyle,
+    required this.subtitleTextStyle,
+    required this.captionTextStyle,
     this.tagMessageTextStyle,
     this.messageInputColor,
     this.referencedMessageBackgroundColor,

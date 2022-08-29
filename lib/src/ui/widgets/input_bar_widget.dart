@@ -13,6 +13,10 @@ class InputBar extends StatefulWidget {
 class _InputBarState extends State<InputBar> {
   final TextEditingController _controller = InputTextFieldController();
 
+  final ImagePicker _picker = ImagePicker();
+
+  late XFile? image;
+
   late FocusNode _focusNode;
 
   bool _isSendButtonVisible = false;
@@ -66,12 +70,72 @@ class _InputBarState extends State<InputBar> {
     if (number < 10) {
       numberStr = '0$numberStr';
     }
-
     return numberStr;
   }
 
   @override
   Widget build(BuildContext context) {
+    Future<String?> _getImage() async {
+      image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image == null) return null;
+      return image!.path;
+    }
+
+    final List<SharingOption> sharingOptions = <SharingOption>[
+      SharingOption(
+          icon: const Icon(Icons.photo_size_select_actual_outlined,
+              color: Color(0xff005fff)),
+          title: 'Image',
+          onTap: () {
+            _getImage().then((value) {
+              if (value != null) {
+                print(value);
+                _handleSendPressed(ImageMessage(
+                  author: InheritedProperties.of(context).author,
+                  uri: value,
+                  id: uuid.v4(),
+                  repliedMessage: InheritedProperties.of(context)
+                      .tagHelper
+                      .tagNotifier
+                      .value,
+                  createdAt: DateTime.now().millisecondsSinceEpoch,
+                  self: true,
+                  name: '',
+                  size: 10,
+                  type: MessageType.image,
+                ));
+              }
+            });
+          }),
+      SharingOption(
+          icon: const Icon(
+            Icons.music_note_outlined,
+            color: Color(0xff005fff),
+          ),
+          title: 'Audio',
+          onTap: () {}),
+      SharingOption(
+          icon: const Icon(CupertinoIcons.doc_text_fill,
+              color: Color(0xff005fff)),
+          title: 'Documents',
+          onTap: () {}),
+      SharingOption(
+          icon: const Icon(
+            Icons.location_on_outlined,
+            color: Color(0xff005fff),
+          ),
+          title: 'Location',
+          onTap: () {}),
+      SharingOption(
+          icon: const Icon(Icons.videocam_outlined, color: Color(0xff005fff)),
+          title: 'Video',
+          onTap: () {}),
+      SharingOption(
+          icon: const Icon(Icons.contacts_outlined, color: Color(0xff005fff)),
+          title: 'Contacts',
+          onTap: () {}),
+    ];
+
     if (_controller.text.trim() != '') {
       _isSendButtonVisible = true;
     } else {
@@ -140,7 +204,35 @@ class _InputBarState extends State<InputBar> {
                     })),
           ),
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                showModalBottomSheet<void>(
+                    backgroundColor: Colors.transparent,
+                    constraints: const BoxConstraints(),
+                    context: context,
+                    builder: (_) {
+                      return Container(
+                          color: const Color(0Xff191919),
+                          constraints: const BoxConstraints(
+                              maxHeight: 250, minHeight: 0),
+                          // padding: const EdgeInsets.symmetric(horizontal: 18),
+                          child: ListView.builder(
+                              itemCount: sharingOptions.length,
+                              itemBuilder: (BuildContext ctx, int i) {
+                                return Card(
+                                  margin: EdgeInsets.zero,
+                                  color: Colors.transparent,
+                                  child: ListTile(
+                                    leading: sharingOptions[i].icon,
+                                    title: Text(sharingOptions[i].title,
+                                        style: InheritedProperties.of(context)
+                                            .theme
+                                            .labelTextStyle),
+                                    onTap: sharingOptions[i].onTap,
+                                  ),
+                                );
+                              }));
+                    });
+              },
               icon: Transform.rotate(
                   angle: 87,
                   child: const Icon(
@@ -212,4 +304,15 @@ class _InputBarState extends State<InputBar> {
       ),
     );
   }
+}
+
+class SharingOption {
+  const SharingOption(
+      {required this.icon, required this.title, required this.onTap});
+
+  final Icon icon;
+
+  final String title;
+
+  final void Function() onTap;
 }

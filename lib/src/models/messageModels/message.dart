@@ -1,15 +1,16 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'messages/custom_message/custom_message.dart';
-import 'messages/file_message/file_message.dart';
+
 import 'messages/audio_message/audio_message.dart';
-import 'messages/video_message/video_message.dart';
+import 'messages/custom_message/custom_message.dart';
 import 'messages/emoji_message/emoji_message.dart';
-import 'messages/image_message/image_message.dart';
+import 'messages/file_message/file_message.dart';
 import 'messages/gif_message/gif_message.dart';
+import 'messages/image_message/image_message.dart';
 import 'messages/system_message/system_message.dart';
 import 'messages/text_message/text_message.dart';
 import 'messages/unsupported_message.dart';
+import 'messages/video_message/video_message.dart';
 import 'user.dart' show User;
 
 /// All possible message types.

@@ -18,7 +18,7 @@ class InheritedMessagesWidget extends InheritedWidget {
   }
 
   @override
-  bool updateShouldNotify(InheritedMessagesWidget old) {
-    return old.messages != messages;
+  bool updateShouldNotify(InheritedMessagesWidget oldWidget) {
+    return oldWidget.messages != messages;
   }
 }

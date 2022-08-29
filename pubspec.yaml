@@ -11,9 +11,9 @@ dependencies:
   any_link_preview: ^2.0.9
   audio_service: ^0.18.7
   audio_video_progress_bar: ^0.10.0
-  audioplayers: ^1.0.1
   bubble: ^1.2.1
   equatable: ^2.0.3
+  file_picker: ^5.0.1
   flutter:
     sdk: flutter
   flutter_dotenv: ^5.0.2
@@ -23,10 +23,15 @@ dependencies:
   giphy_get: ^3.1.0
   google_fonts: ^3.0.1
   holding_gesture: ^1.1.0
+  image_editor_plus: ^0.1.5
+  image_picker: ^0.8.5+3
   intl: ^0.17.0
   json_serializable: ^6.3.1
   just_audio: ^0.9.28
   just_audio_background: ^0.0.1-beta.7
+  mime: ^1.0.2
+  path: ^1.8.1
+  path_provider: ^2.0.11
   permission_handler: ^10.0.0
   record: ^4.4.0
   scrollable_positioned_list: ^0.3.2
@@ -51,6 +56,8 @@ flutter:
      - assets/double_tick.svg
      - assets/pending_message.svg
      - assets/single_tick.svg
+     - assets/image.jpg
+  
   #
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages

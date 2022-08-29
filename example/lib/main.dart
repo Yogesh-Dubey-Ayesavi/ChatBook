@@ -16,7 +16,7 @@ Future<void> main() async {
   //   androidNotificationChannelName: 'Audio playback',
   //   androidNotificationOngoing: true,
   // );
-  runApp(ChatBookApp());
+  runApp(const ChatBookApp());
 }
 
 class ChatBookApp extends StatelessWidget {
@@ -24,7 +24,7 @@ class ChatBookApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       // theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
       home: HomePage(),
     );
@@ -76,20 +76,20 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                    children: const [
                       Text(
                         "Kriss Benawat",
-                        style: GoogleFonts.poppins(
+                        style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.white),
                       ),
-                      const SizedBox(
+                      SizedBox(
                         height: 6,
                       ),
                       Text(
                         "Online",
-                        style: GoogleFonts.poppins(
+                        style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
                             color: Colors.white),
@@ -130,3 +130,103 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+// import 'dart:typed_data';
+
+// import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
+// import 'package:image_editor_plus/image_editor_plus.dart';
+
+// void main() {
+//   runApp(
+//     const MaterialApp(
+//       home: ImageEditorExample(),
+//     ),
+//   );
+// }
+
+// class ImageEditorExample extends StatefulWidget {
+  
+//   const ImageEditorExample({
+//     Key? key,
+//   }) : super(key: key);
+
+//   @override
+//   _ImageEditorExampleState createState() => _ImageEditorExampleState();
+// }
+
+// class _ImageEditorExampleState extends State<ImageEditorExample> {
+//   Uint8List? imageData;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     loadAsset("image.jpg");
+//   }
+
+//   void loadAsset(String name) async {
+//     var data = await rootBundle.load('assets/$name');
+//     setState(() => imageData = data.buffer.asUint8List());
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text("ImageEditor Example"),
+//         centerTitle: true,
+//       ),
+//       body: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           if (imageData != null) Image.memory(imageData!),
+//           const SizedBox(height: 16),
+//           ElevatedButton(
+//             child: const Text("Single image editor"),
+//             onPressed: () async {
+//               var editedImage = await Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (context) => ImageEditor(
+//                     image: imageData,
+//                   ),
+//                 ),
+//               );
+
+//               // replace with edited image
+//               if (editedImage != null) {
+//                 imageData = editedImage;
+//                 setState(() {});
+//               }
+//             },
+//           ),
+//           ElevatedButton(
+//             child: const Text("Multiple image editor"),
+//             onPressed: () async {
+//               var editedImage = await Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (context) => ImageEditor(
+//                     images: [
+//                       imageData,
+//                       imageData,
+//                     ],
+//                     allowMultiple: true,
+//                     allowCamera: true,
+//                     allowGallery: true,
+//                   ),
+//                 ),
+//               );
+
+//               // replace with edited image
+//               if (editedImage != null) {
+//                 imageData = editedImage;
+//                 setState(() {});
+//               }
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

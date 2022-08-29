@@ -12,6 +12,10 @@ class TextMessageWidget extends StatefulWidget {
 }
 
 class _TextMessageWidgetState extends State<TextMessageWidget> {
+
+
+
+
   @override
   Widget build(BuildContext context) {
     final bodyTextStyle = widget.message.self == true
@@ -28,8 +32,7 @@ class _TextMessageWidgetState extends State<TextMessageWidget> {
             .theme
             .receivedMessageBodyCodeTextStyle;
 
-    RegExp exp = RegExp(r'(?:(?:https?|ftp):)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
-
+    
     String? _urlGiver(String text) {
       String? urlText;
       Iterable<RegExpMatch> matches = exp.allMatches(text);
@@ -41,6 +44,9 @@ class _TextMessageWidgetState extends State<TextMessageWidget> {
 
     _urlGiver(widget.message.text);
 
+    if (kDebugMode) {
+      print("text rerendered");
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

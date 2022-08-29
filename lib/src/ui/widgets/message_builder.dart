@@ -73,7 +73,10 @@ class _MessageBuilderState extends State<MessageBuilder> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _messageProviderWidget(widget.message)!,
+                            Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: _messageWidgetProvider(widget.message)!,
+                            ),
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8.0),
@@ -112,7 +115,7 @@ class _MessageBuilderState extends State<MessageBuilder> {
     );
   }
 
-  Widget? _messageProviderWidget(Message message) {
+  Widget? _messageWidgetProvider(Message message) {
     MessageType type = message.type;
     switch (type) {
       case MessageType.text:
@@ -124,6 +127,8 @@ class _MessageBuilderState extends State<MessageBuilder> {
       case MessageType.audio:
         message as AudioMessage;
         return AudioMessageWidget(message: message);
+      case MessageType.image:
+        return ImageMessageWidget(message: message as ImageMessage);
       default:
         return null;
     }
@@ -198,7 +203,7 @@ class _MessageBuilderState extends State<MessageBuilder> {
   }
 
   Color _bubbleColorGiver(Message message) {
-    if (["text", 'audio', 'video'].contains(message.type.name)) {
+    if (["text", 'audio', 'video', 'image'].contains(message.type.name)) {
       return widget.message.self == true
           ? InheritedProperties.of(context).theme.sentMessageBubbleColor
           : InheritedProperties.of(context).theme.receivedMessageBubbleColor;

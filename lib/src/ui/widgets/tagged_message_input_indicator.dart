@@ -45,6 +45,7 @@ class _TaggedMessageIndicatorState extends State<TaggedMessageIndicator> {
       case MessageType.image:
         break;
       case MessageType.system:
+        // ignore: todo
         // TODO: Handle this case.
         break;
       case MessageType.text:
@@ -67,6 +68,7 @@ class _TaggedMessageIndicatorState extends State<TaggedMessageIndicator> {
         // TODO: Handle this case.
         break;
     }
+    return null;
   }
 
   @override

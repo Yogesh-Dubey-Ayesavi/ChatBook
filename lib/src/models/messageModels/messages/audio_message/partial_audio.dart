@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 import '../../message.dart';
-import 'audio_message.dart';
 
 part 'partial_audio.g.dart';
 

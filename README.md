@@ -1,15 +1,30 @@
 
 
-Welcome to the world to **Ayesavi ChatBook**  
+Welcome to the world to **Ayesavi's ChatBook** 
+
+## Why ?
+
+Adding a chatting Module in any application plays a very vital role. In making a customise chatting module takes plenty of hours and sucks so here's library for all the community that wraps up all these issues.
+
+
 
 ## Features
 
- ChatBook is a multipurpose chatting library with sum up of all services that are expected by a chatting application to offer.
+ * System Messages
+ * Location Messages
+ * Gif/GiphyMessages
+ * TextMessages
+ * FileMessages
+ * EmojiMessages
+ * ContactMessages
+ * ImageMessages
+ * VideoMessages
+ * AudioMessages
 
-## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+## Installation
+
+Since this library combines a lot of features instead i would recommend you to follow all the steps with otherwise you would have to follow hell lot of errors.
 
 ## Usage
 
