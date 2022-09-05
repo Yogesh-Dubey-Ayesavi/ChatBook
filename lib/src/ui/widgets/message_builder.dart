@@ -3,8 +3,8 @@ part of '../../../chatbook.dart';
 class MessageBuilder extends StatefulWidget {
   const MessageBuilder({Key? key, required this.message, this.prevMessage})
       : super(key: key);
-  final Message message;
-  final Message? prevMessage;
+  final ValueNotifier<Message> message;
+  final ValueNotifier<Message>? prevMessage;
   @override
   State<MessageBuilder> createState() => _MessageBuilderState();
 }
@@ -14,15 +14,17 @@ class _MessageBuilderState extends State<MessageBuilder> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _dateProvider(widget.message, widget.prevMessage),
+        DateProvider(
+            message: widget.message.value,
+            prevMessage: widget.prevMessage?.value),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Container(
             width: double.infinity,
-            alignment:
-                widget.message.self != null && widget.message.self == true
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
+            alignment: widget.message.value.self != null &&
+                    widget.message.value.self == true
+                ? Alignment.centerRight
+                : Alignment.centerLeft,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -47,7 +49,7 @@ class _MessageBuilderState extends State<MessageBuilder> {
                           InheritedProperties.of(context)
                               .tagHelper
                               .tagNotifier
-                              .value = widget.message;
+                              .value = widget.message.value;
                         }
                       },
                       confirmSwipe: (direction) async {
@@ -65,17 +67,26 @@ class _MessageBuilderState extends State<MessageBuilder> {
                       key: const ValueKey(1),
                       child: Bubble(
                         padding: const BubbleEdges.all(0),
-                        showNip: _nipGiver(widget.message, widget.prevMessage),
-                        nip: widget.message.self == true
+                        showNip: _nipGiver(
+                            widget.message.value, widget.prevMessage?.value),
+                        nip: widget.message.value.self == true
                             ? BubbleNip.rightTop
                             : BubbleNip.leftTop,
-                        color: _bubbleColorGiver(widget.message),
+                        color: _bubbleColorGiver(widget.message.value),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            if (widget.message.value.repliedMessage !=
+                                null) ...[
+                              RepliedMessageWidget(
+                                repliedMessage:
+                                    widget.message.value.repliedMessage!,
+                              )
+                            ],
                             Padding(
                               padding: const EdgeInsets.all(5),
-                              child: _messageWidgetProvider(widget.message)!,
+                              child:
+                                  _messageWidgetProvider(widget.message.value)!,
                             ),
                             Padding(
                               padding:
@@ -86,8 +97,9 @@ class _MessageBuilderState extends State<MessageBuilder> {
                                     Text(
                                         DateFormat.jm().format(
                                             DateTime.fromMillisecondsSinceEpoch(
-                                                widget.message.createdAt!)),
-                                        style: widget.message.self == true
+                                                widget
+                                                    .message.value.createdAt!)),
+                                        style: widget.message.value.self == true
                                             ? InheritedProperties.of(context)
                                                 .theme
                                                 .sentTimeTextStyle
@@ -97,8 +109,9 @@ class _MessageBuilderState extends State<MessageBuilder> {
                                     const SizedBox(
                                       width: 5,
                                     ),
-                                    if (widget.message.self == true)
-                                      _statusProvider(widget.message),
+                                    if (widget.message.value.self == true)
+                                      StatusProviderWidget(
+                                          message: widget.message.value),
                                   ]),
                             ),
                           ],
@@ -144,67 +157,9 @@ class _MessageBuilderState extends State<MessageBuilder> {
     }
   }
 
-  Widget _dateProvider(Message currentMessage, Message? prevMessage) {
-    if (prevMessage != null &&
-        sameDay(currentMessage.createdAt!, prevMessage.createdAt) == false) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
-        child: Text(
-          DateFormat('dd MMM yyyy').format(
-              DateTime.fromMicrosecondsSinceEpoch(currentMessage.createdAt!)),
-          style: InheritedProperties.of(context).theme.dateHeaderTextStyle,
-        ),
-      );
-    } else if (prevMessage == null) {
-      return Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Text(
-          DateFormat('dd MMM yyyy').format(
-              DateTime.fromMicrosecondsSinceEpoch(currentMessage.createdAt!)),
-          style: InheritedProperties.of(context).theme.dateHeaderTextStyle,
-        ),
-      );
-    } else {
-      return const SizedBox();
-    }
-  }
-
-  Widget _statusProvider(Message message) {
-    switch (message.status) {
-      case Status.seen:
-        return SvgPicture.asset(
-          'assets/double_tick.svg',
-          color: Colors.blue,
-          height: 10,
-          width: 10,
-        );
-      case Status.delivered:
-        return SvgPicture.asset(
-          'assets/double_tick.svg',
-          color: Colors.grey,
-          height: 10,
-          width: 10,
-        );
-      case Status.error:
-        return const Icon(Icons.error_outline, color: Colors.red, size: 18);
-      case Status.sending:
-        return const SizedBox(
-            height: 10, width: 10, child: CupertinoActivityIndicator());
-      case Status.sent:
-        return SvgPicture.asset(
-          'asset/single_tick.svg',
-          color: Colors.grey,
-          height: 10,
-          width: 10,
-        );
-      default:
-        return const SizedBox();
-    }
-  }
-
   Color _bubbleColorGiver(Message message) {
     if (["text", 'audio', 'video', 'image'].contains(message.type.name)) {
-      return widget.message.self == true
+      return widget.message.value.self == true
           ? InheritedProperties.of(context).theme.sentMessageBubbleColor
           : InheritedProperties.of(context).theme.receivedMessageBubbleColor;
     } else if (message.type.name == 'gif') {

@@ -36,34 +36,72 @@ class _TaggedMessageIndicatorState extends State<TaggedMessageIndicator> {
         style: InheritedProperties.of(context).theme.tagMessageTextStyle);
   }
 
+  Widget _tagImageWidget(BuildContext context, ImageMessage message) {
+    return Text('Image Message',
+        style: InheritedProperties.of(context).theme.tagMessageTextStyle);
+  }
+
+  Widget _tagCustomWidget(BuildContext context, CustomMessage message) {
+    return Text('Custom Message',
+        style: InheritedProperties.of(context).theme.tagMessageTextStyle);
+  }
+
+  Widget _tagFileWidget(BuildContext context, FileMessage message) {
+    return Text('File Message',
+        style: InheritedProperties.of(context).theme.tagMessageTextStyle);
+  }
+
+  Widget _tagSystemWidget(BuildContext context, SystemMessage message) {
+    return Text('System Message',
+        style: InheritedProperties.of(context).theme.tagMessageTextStyle);
+  }
+
+  Widget _tagVideoWidget(BuildContext context, VideoMessage message) {
+    return Text('VideoMessage Message',
+        style: InheritedProperties.of(context).theme.tagMessageTextStyle);
+  }
+
+  Widget _tagEmojiWidget(BuildContext context, EmojiMessage message) {
+    return Text('EmojiMessage Message',
+        style: InheritedProperties.of(context).theme.tagMessageTextStyle);
+  }
+
+  Widget _tagUnsupportedWidget(
+      BuildContext context, UnsupportedMessage message) {
+    return Text('UnsupportedMessage Message',
+        style: InheritedProperties.of(context).theme.tagMessageTextStyle);
+  }
+
+  Widget _tagLocationWidget(BuildContext context, UnsupportedMessage message) {
+    return Text('LocationMessage Message',
+        style: InheritedProperties.of(context).theme.tagMessageTextStyle);
+  }
+
   Widget? tagGiver(Message message) {
     switch (message.type) {
       case MessageType.custom:
-        break;
+        return _tagCustomWidget(context, message as CustomMessage);
       case MessageType.file:
-        break;
+        return _tagFileWidget(context, message as FileMessage);
       case MessageType.image:
-        break;
+        return _tagImageWidget(context, message as ImageMessage);
       case MessageType.system:
-        // ignore: todo
-        // TODO: Handle this case.
-        break;
+        return _tagSystemWidget(context, message as SystemMessage);
       case MessageType.text:
         return _tagTextWidget(context, message as TextMessage);
       case MessageType.unsupported:
-        // TODO: Handle this case.
-        break;
+        return _tagUnsupportedWidget(context, message as UnsupportedMessage);
       case MessageType.audio:
         return _tagAudioWidget(context, message as AudioMessage);
-
       case MessageType.video:
-        // TODO: Handle this case.
-        break;
+        return _tagVideoWidget(context, message as VideoMessage);
       case MessageType.emoji:
-        // TODO: Handle this case.
-        break;
+        return _tagEmojiWidget(context, message as EmojiMessage);
       case MessageType.gif:
         return _tagGiphyWidget(context, message as GifMessage);
+      // case MessageType.location:
+      //   return _tagLocationWidget(context, message as LocationMessage);
+
       case MessageType.location:
         // TODO: Handle this case.
         break;

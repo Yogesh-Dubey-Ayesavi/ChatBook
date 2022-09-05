@@ -8,7 +8,7 @@ class InheritedMessagesWidget extends InheritedWidget {
       {Key? key, required Widget child, required this.messages})
       : super(key: key, child: child);
 
-  final List<Message> messages;
+  final List<MessageBuilder> messages;
 
   static InheritedMessagesWidget of(BuildContext context) {
     final InheritedMessagesWidget? result =

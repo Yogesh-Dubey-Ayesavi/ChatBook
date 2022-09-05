@@ -8,6 +8,7 @@ import 'package:chatbook/src/audio_service/notifiers/play_back_button_state_noti
 import 'package:chatbook/src/audio_service/notifiers/progress_bar_notifier.dart';
 import 'package:chatbook/src/models/messageModels/messages/unsupported_message.dart';
 import 'package:chatbook/src/ui/theme/theme.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -33,6 +34,7 @@ import 'chatbook.dart';
 import 'package:uri_to_file/uri_to_file.dart';
 import 'dart:async';
 import 'dart:developer' as logger;
+import 'dart:isolate';
 
 export './src/models/messageModels/messages/audio_message/audio_message.dart';
 export './src/models/messageModels/messages/emoji_message/emoji_message.dart';
@@ -46,6 +48,7 @@ export './src/models/messageModels/messages/location_message.dart';
 export './src/models/messageModels/message.dart';
 export './src/models/messageModels/user.dart';
 export './src/ui/theme/default_theme.dart';
+export './src/models/messageModels/messages/file_message/file_message.dart';
 
 part './src/ui/main_chatbook.dart';
 part './src/ui/widgets/message_list.dart';
@@ -65,3 +68,6 @@ part './src/ui/widgets/gif_message_widget.dart';
 part './src/ui/widgets/tagged_message_input_indicator.dart';
 part './src/helpers/tag_message_helper.dart';
 part './src/ui/widgets/image_message_widget.dart';
+part './src/ui/widgets/message_builder_widgets/date_provider.dart';
+part './src/ui/widgets/message_builder_widgets/status_provider_widget.dart';
+part './src/ui/widgets/message_builder_widgets/replied_message_widget.dart';

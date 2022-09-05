@@ -24,9 +24,9 @@ class ChatBookApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      // theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
-      home: HomePage(),
+    return MaterialApp(
+      theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
+      home: const HomePage(),
     );
   }
 }
@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: const Color(0XFF010101),
       body: ChatBook(
-        author: const User(id: "1"),
+        author: const User(id: "1", firstName: "Yogesh"),
         giphyApiKey: 'Hbruc2uiEvkJKgCIrZw3n68ukoiycsUu',
         onSendMessage: (Message message) {
           // print(message.self);

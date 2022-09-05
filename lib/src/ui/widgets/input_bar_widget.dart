@@ -73,39 +73,50 @@ class _InputBarState extends State<InputBar> {
     return numberStr;
   }
 
+  Future _getAudio(int a) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.audio,
+    );
+
+    print(result!.files.first.bytes);
+  }
+
+  Future _getImage(User author, Message? message) async {
+    image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      _handleSendPressed(ImageMessage(
+        author: author,
+        uri: image!.path,
+        id: uuid.v4(),
+        repliedMessage: message,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        self: true,
+        name: '',
+        size: 10,
+        type: MessageType.image,
+      ));
+    }
+  }
+
+  Future _getFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowMultiple: true,
+      allowedExtensions: ['jpg', 'pdf', 'doc'],
+    );
+    if (result != null) {}
+  }
+
   @override
   Widget build(BuildContext context) {
-    Future<String?> _getImage() async {
-      image = await _picker.pickImage(source: ImageSource.gallery);
-      if (image == null) return null;
-      return image!.path;
-    }
-
     final List<SharingOption> sharingOptions = <SharingOption>[
       SharingOption(
           icon: const Icon(Icons.photo_size_select_actual_outlined,
               color: Color(0xff005fff)),
           title: 'Image',
           onTap: () {
-            _getImage().then((value) {
-              if (value != null) {
-                print(value);
-                _handleSendPressed(ImageMessage(
-                  author: InheritedProperties.of(context).author,
-                  uri: value,
-                  id: uuid.v4(),
-                  repliedMessage: InheritedProperties.of(context)
-                      .tagHelper
-                      .tagNotifier
-                      .value,
-                  createdAt: DateTime.now().millisecondsSinceEpoch,
-                  self: true,
-                  name: '',
-                  size: 10,
-                  type: MessageType.image,
-                ));
-              }
-            });
+            _getImage(InheritedProperties.of(context).author,
+                InheritedProperties.of(context).tagHelper.tagNotifier.value);
           }),
       SharingOption(
           icon: const Icon(
@@ -113,12 +124,14 @@ class _InputBarState extends State<InputBar> {
             color: Color(0xff005fff),
           ),
           title: 'Audio',
-          onTap: () {}),
+          onTap: () async {}),
       SharingOption(
           icon: const Icon(CupertinoIcons.doc_text_fill,
               color: Color(0xff005fff)),
           title: 'Documents',
-          onTap: () {}),
+          onTap: () {
+            _getFile();
+          }),
       SharingOption(
           icon: const Icon(
             Icons.location_on_outlined,
@@ -171,7 +184,7 @@ class _InputBarState extends State<InputBar> {
                           .tagNotifier
                           .value,
                       createdAt: DateTime.now().millisecondsSinceEpoch,
-                      self: true,
+                      self: Random().nextBool(),
                     ));
                   } else if (kIsWeb &&
                       event.isAltPressed &&
@@ -251,7 +264,7 @@ class _InputBarState extends State<InputBar> {
                           .tagNotifier
                           .value,
                       createdAt: DateTime.now().millisecondsSinceEpoch,
-                      self: true,
+                      self: Random().nextBool(),
                     ));
                   },
                   icon: const Icon(

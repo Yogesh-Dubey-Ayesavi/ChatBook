@@ -1,6 +1,5 @@
 part of '../../chatbook.dart';
 
-
 bool sameDay(int firstStamp, int? secondStamp) {
   if (DateFormat('dd MMM yyyy')
           .format(DateTime.fromMicrosecondsSinceEpoch(firstStamp)) ==
@@ -20,7 +19,8 @@ Duration intToDurationFormatter(double duration) {
   return Duration(seconds: s as int, minutes: m as int, hours: h as int);
 }
 
- const Uuid uuid =  Uuid();
+const Uuid uuid = Uuid();
 
- RegExp exp = RegExp(r'(?:(?:https?|ftp):)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
-   
+RegExp exp = RegExp(r'(?:(?:https?|ftp):)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
+
+

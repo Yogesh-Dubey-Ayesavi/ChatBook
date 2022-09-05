@@ -29,9 +29,7 @@ class ChatBook extends StatefulWidget {
 }
 
 class _ChatBookState extends State<ChatBook> {
-  final List<Message> _messages = [
-   
-  ];
+  final List<MessageBuilder> _messages = [];
 
   /// Initialising ItemScrollController
   /// It is needed for jumpTo and scrollTo methods to reach any particular item
@@ -55,6 +53,8 @@ class _ChatBookState extends State<ChatBook> {
   /// For holding giphy Api Key
   //! Store API keys in the env mode separate it is advised so to keep your API keys private to you only
 
+  bool _isScrollToBottomVisible = false;
+
   @override
   void initState() {
     super.initState();
@@ -68,24 +68,66 @@ class _ChatBookState extends State<ChatBook> {
         });
       });
     }
+    _autoGetPosition();
+  }
+
+  void _autoGetPosition() {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      itemScrollController.scrollListener(
+        (position, maxExtent) {
+          _isScrollToBottomVisible =
+              !((position.abs() - maxExtent.abs()).abs() < 500);
+          setState(() {});
+        },
+      );
+    });
+  }
+
+  void autoScroll(
+    int index, {
+    Duration duration = const Duration(milliseconds: 200),
+    bool scrollToMax = false,
+  }) {
+    if (_messages.isNotEmpty) {
+      itemScrollController
+          .scrollTo(index: index, duration: duration, curve: Curves.easeInCubic)
+          .then((value) {
+        if (scrollToMax) {
+          itemScrollController.scrollToMax(
+              curve: Curves.easeInCubic,
+              duration: const Duration(milliseconds: 50));
+          _isScrollToBottomVisible = false;
+          setState(() {});
+        }
+      });
+
+      Future.delayed(const Duration(milliseconds: 200), _autoGetPosition);
+    }
   }
 
   void onPressSend(
     Message sendingMessage,
   ) {
-    setState(() {
-      _messages.insert(0, sendingMessage);
-    });
+    _messages.add(MessageBuilder(
+        message: ValueNotifier(sendingMessage),
+        prevMessage: _messages.isNotEmpty ? _messages.last.message : null));
+    setState(() {});
     widget.onSendMessage.call(sendingMessage.copyWith(
       self: false,
     ));
+    Future.delayed(const Duration(milliseconds: 50), () {
+      autoScroll(
+        _messages.length - 1,
+        scrollToMax: true,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return GiphyGetWrapper(
 
-        /// GiphyGetWrapper is used to get giphys where ever called in the application.
+        /// GiphyGetWrapper is nused to get giphys where ever called in the application.
         giphy_api_key: widget.giphyApiKey!,
         builder: (stream, giphyGetWrapper) {
           stream.listen((gif) {
@@ -100,6 +142,7 @@ class _ChatBookState extends State<ChatBook> {
           });
 
           return InheritedProperties(
+            scrollTo: autoScroll,
             tagHelper: _tagMessageHelper,
             theme: widget.theme,
             giphyGetWrapper: giphyGetWrapper,
@@ -107,39 +150,60 @@ class _ChatBookState extends State<ChatBook> {
             //* Needed for inheriting acess of messages to all its child widgets.
             child: InheritedMessagesWidget(
               messages: _messages,
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 18.00,
+              child: Stack(
+                children: [
+                  Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 18.00,
+                          ),
+                          child: MessageList(
+                            controller: itemScrollController,
+                            positionsListener: itemPositionsListener,
+                          ),
+                        ),
                       ),
-                      child: MessageList(
-                        controller: itemScrollController,
-                        positionsListener: itemPositionsListener,
+                      const SizedBox(
+                        height: 10,
                       ),
-                    ),
+                      // RepaintBoundary(
+                      // child:
+                      ValueListenableBuilder(
+                          valueListenable: _tagMessageHelper.tagNotifier,
+                          builder: (_, value, __) {
+                            if (value == null) return const SizedBox();
+                            return TaggedMessageIndicator(
+                                message: value as Message);
+                          }),
+                      // ),
+                      ConstrainedBox(
+                          constraints: const BoxConstraints(
+                              maxHeight: 150, minHeight: 60),
+                          child: InputBar(
+                            giphyGetWrapper: giphyGetWrapper,
+                            onSendMessage: onPressSend,
+                          ))
+                    ],
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  // RepaintBoundary(
-                  // child:
-                  ValueListenableBuilder(
-                      valueListenable: _tagMessageHelper.tagNotifier,
-                      builder: (_, value, __) {
-                        if (value == null) return const SizedBox();
-                        return TaggedMessageIndicator(
-                            message: value as Message);
-                      }),
-                  // ),
-                  ConstrainedBox(
-                      constraints:
-                          const BoxConstraints(maxHeight: 150, minHeight: 60),
-                      child: InputBar(
-                        giphyGetWrapper: giphyGetWrapper,
-                        onSendMessage: onPressSend,
-                      ))
+                  Positioned(
+                    bottom: 100,
+                    right: 20,
+                    child: Visibility(
+                        visible: _isScrollToBottomVisible,
+                        child: CircleAvatar(
+                          backgroundColor: Color(0XFF191919),
+                          child: IconButton(
+                            onPressed: () {
+                              autoScroll(_messages.length - 1,
+                                  duration: const Duration(seconds: 2));
+                            },
+                            icon: const Icon(CupertinoIcons.arrow_down,
+                                color: Colors.white),
+                          ),
+                        )),
+                  )
                 ],
               ),
             ),

@@ -10,12 +10,16 @@ class InheritedProperties extends InheritedWidget {
     required this.giphyGetWrapper,
     required this.tagHelper,
     required this.author,
+    required this.scrollTo,
   }) : super(key: key, child: child);
 
   final ChatTheme theme;
   final TagMessageHelper tagHelper;
   final GiphyGetWrapper giphyGetWrapper;
   final User author;
+  final void Function(int index, {Duration duration, bool scrollToMax})
+      scrollTo;
+
   static InheritedProperties of(BuildContext context) {
     final InheritedProperties? result =
         context.dependOnInheritedWidgetOfExactType<InheritedProperties>();

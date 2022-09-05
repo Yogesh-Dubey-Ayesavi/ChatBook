@@ -21,19 +21,22 @@ class _MessageListState extends State<MessageList> {
   @override
   Widget build(BuildContext context) {
     return ScrollablePositionedList.builder(
-      reverse: true,
+      reverse: false,
       minCacheExtent: 6,
       itemScrollController: widget.controller,
       itemPositionsListener: widget.positionsListener,
       itemCount: InheritedMessagesWidget.of(context).messages.length,
       itemBuilder: (_, index) {
-        return MessageBuilder(
-          message: InheritedMessagesWidget.of(context).messages[index],
-          prevMessage:
-              index != InheritedMessagesWidget.of(context).messages.length - 1
-                  ? InheritedMessagesWidget.of(context).messages[index + 1]
-                  : null,
-        );
+        return InheritedMessagesWidget.of(context).messages[index];
+
+        //  MessageBuilder(
+        //   message:
+        //    InheritedMessagesWidget.of(context).messages[index],
+        //   prevMessage:
+        //       index != InheritedMessagesWidget.of(context).messages.length - 1
+        //           ? InheritedMessagesWidget.of(context).messages[index + 1]
+        //           : null,
+        // );
       },
       scrollDirection: Axis.vertical,
     );
