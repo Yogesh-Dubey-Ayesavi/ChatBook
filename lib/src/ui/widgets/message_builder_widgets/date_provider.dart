@@ -1,11 +1,8 @@
 part of '../../../../chatbook.dart';
 
 class DateProvider extends StatelessWidget {
-  const DateProvider({
-    Key? key,
-    required this.message,
-    this.prevMessage
-  }) : super(key: key);
+  const DateProvider({Key? key, required this.message, this.prevMessage})
+      : super(key: key);
 
   final Message message;
   final Message? prevMessage;
@@ -37,6 +34,6 @@ class DateProvider extends StatelessWidget {
       }
     }
 
-    return _dateProvider(message,prevMessage);
+    return SizedBox(child: _dateProvider(message, prevMessage));
   }
 }

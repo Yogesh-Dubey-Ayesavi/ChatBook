@@ -5,7 +5,8 @@ import 'theme.dart';
 
 class DefaultChatTheme extends ChatTheme {
   const DefaultChatTheme(
-      {super.headlineTextStyle = const TextStyle(
+      {super.systemMessageTextStyle = const TextStyle(color: Colors.white),
+      super.headlineTextStyle = const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
           fontFamily: "",

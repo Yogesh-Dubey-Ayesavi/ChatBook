@@ -15,6 +15,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
   @override
   void initState() {
     _audioHelper = AudioHelper();
+    _audioHelper.init(widget.message.uri);
     super.initState();
   }
 
@@ -26,8 +27,6 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _audioHelper.init(widget.message.uri);
-
     return SizedBox(
         child: Row(
       children: [

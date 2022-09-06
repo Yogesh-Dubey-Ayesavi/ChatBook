@@ -1,10 +1,10 @@
 part of '../../../../chatbook.dart';
 
 class StatusProviderWidget extends StatelessWidget {
-  const StatusProviderWidget({Key? key, required this.message})
+  const StatusProviderWidget({Key? key, required this.messageNotifier})
       : super(key: key);
 
-  final Message message;
+  final ValueNotifier<Message> messageNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +41,10 @@ class StatusProviderWidget extends StatelessWidget {
       }
     }
 
-    return _statusProvider(message);
+    return ValueListenableBuilder(
+        valueListenable: messageNotifier,
+        builder: (_, value, __) {
+          return _statusProvider(value as Message);
+        });
   }
 }

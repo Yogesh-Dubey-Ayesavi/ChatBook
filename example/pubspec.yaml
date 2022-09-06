@@ -35,6 +35,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   audioplayers: ^1.0.1
+  workmanager: ^0.5.0
+  worker_manager: ^4.4.6
+  isolated_worker: ^0.1.1
 
 dev_dependencies:
   flutter_test:

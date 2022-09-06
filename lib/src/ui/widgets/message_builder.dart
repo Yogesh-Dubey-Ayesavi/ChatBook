@@ -21,111 +21,134 @@ class _MessageBuilderState extends State<MessageBuilder> {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Container(
             width: double.infinity,
-            alignment: widget.message.value.self != null &&
-                    widget.message.value.self == true
-                ? Alignment.centerRight
-                : Alignment.centerLeft,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LimitedBox(
-                  maxWidth: 6.5 / 10 * (MediaQuery.of(context).size.width),
-                  child: IntrinsicWidth(
-                      child: RepaintBoundary(
-                    child: Swipeable(
-                      maxOffset: .7,
-                      movementDuration: const Duration(milliseconds: 500),
-                      background: const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Icon(
-                            Icons.share,
-                            size: 20,
-                            color: Colors.white,
-                          )),
-                      direction: SwipeDirection.startToEnd,
-                      onSwipe: (dir) {
-                        if (SwipeDirection.startToEnd == dir) {
-                          logger.log("swiped");
-                          InheritedProperties.of(context)
-                              .tagHelper
-                              .tagNotifier
-                              .value = widget.message.value;
-                        }
-                      },
-                      confirmSwipe: (direction) async {
-                        logger.log((SwipeDirection.startToEnd == direction)
-                            .toString());
-                        return SwipeDirection.startToEnd == direction;
-                      },
-                      allowedPointerKinds: const {
-                        PointerDeviceKind.mouse,
-                        PointerDeviceKind.stylus,
-                        PointerDeviceKind.touch,
-                        PointerDeviceKind.trackpad,
-                        PointerDeviceKind.unknown,
-                      },
-                      key: const ValueKey(1),
-                      child: Bubble(
-                        padding: const BubbleEdges.all(0),
-                        showNip: _nipGiver(
-                            widget.message.value, widget.prevMessage?.value),
-                        nip: widget.message.value.self == true
-                            ? BubbleNip.rightTop
-                            : BubbleNip.leftTop,
-                        color: _bubbleColorGiver(widget.message.value),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (widget.message.value.repliedMessage !=
-                                null) ...[
-                              RepliedMessageWidget(
-                                repliedMessage:
-                                    widget.message.value.repliedMessage!,
-                              )
-                            ],
-                            Padding(
-                              padding: const EdgeInsets.all(5),
-                              child:
-                                  _messageWidgetProvider(widget.message.value)!,
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+            alignment: _alignmentProvider(widget.message.value),
+            child: widget.message.value.type == MessageType.system
+                ? SystemMessageWidget(
+                    systemMessage: widget.message.value as SystemMessage,
+                  )
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      RepaintBoundary(
+                        child: LimitedBox(
+                          maxWidth:
+                              6.5 / 10 * (MediaQuery.of(context).size.width),
+                          child: IntrinsicWidth(
+                            child: Swipeable(
+                              maxOffset: .7,
+                              movementDuration:
+                                  const Duration(milliseconds: 500),
+                              background: const Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Icon(
+                                    Icons.share,
+                                    size: 20,
+                                    color: Colors.white,
+                                  )),
+                              direction: SwipeDirection.startToEnd,
+                              onSwipe: (dir) {
+                                if (SwipeDirection.startToEnd == dir) {
+                                  logger.log("swiped");
+                                  InheritedProperties.of(context)
+                                      .tagHelper
+                                      .tagNotifier
+                                      .value = widget.message.value;
+                                }
+                              },
+                              confirmSwipe: (direction) async {
+                                logger.log(
+                                    (SwipeDirection.startToEnd == direction)
+                                        .toString());
+                                return SwipeDirection.startToEnd == direction;
+                              },
+                              allowedPointerKinds: const {
+                                PointerDeviceKind.mouse,
+                                PointerDeviceKind.stylus,
+                                PointerDeviceKind.touch,
+                                PointerDeviceKind.trackpad,
+                                PointerDeviceKind.unknown,
+                              },
+                              key: const ValueKey(1),
+                              child: Bubble(
+                                padding: const BubbleEdges.all(0),
+                                showNip: _nipGiver(widget.message.value,
+                                    widget.prevMessage?.value),
+                                nip: widget.message.value.self == true
+                                    ? BubbleNip.rightTop
+                                    : BubbleNip.leftTop,
+                                color: _bubbleColorGiver(widget.message.value),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                        DateFormat.jm().format(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                widget
-                                                    .message.value.createdAt!)),
-                                        style: widget.message.value.self == true
-                                            ? InheritedProperties.of(context)
-                                                .theme
-                                                .sentTimeTextStyle
-                                            : InheritedProperties.of(context)
-                                                .theme
-                                                .receivedTimeTextStyle),
-                                    const SizedBox(
-                                      width: 5,
+                                    if (widget.message.value.repliedMessage !=
+                                        null) ...[
+                                      RepliedMessageWidget(
+                                        repliedMessage: widget
+                                            .message.value.repliedMessage!,
+                                      )
+                                    ],
+                                    Padding(
+                                      padding: const EdgeInsets.all(5),
+                                      child: _messageWidgetProvider(
+                                          widget.message.value)!,
                                     ),
-                                    if (widget.message.value.self == true)
-                                      StatusProviderWidget(
-                                          message: widget.message.value),
-                                  ]),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                                DateFormat.jm().format(DateTime
+                                                    .fromMillisecondsSinceEpoch(
+                                                        widget.message.value
+                                                            .createdAt!)),
+                                                style: widget.message.value
+                                                            .self ==
+                                                        true
+                                                    ? InheritedProperties.of(
+                                                            context)
+                                                        .theme
+                                                        .sentTimeTextStyle
+                                                    : InheritedProperties.of(
+                                                            context)
+                                                        .theme
+                                                        .receivedTimeTextStyle),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            if (widget.message.value.self ==
+                                                true)
+                                              StatusProviderWidget(
+                                                  messageNotifier:
+                                                      widget.message),
+                                          ]),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  )),
-                ),
-              ],
-            ),
+                    ],
+                  ),
           ),
         ),
       ],
     );
+  }
+
+  Alignment? _alignmentProvider(Message message) {
+    if (message.self != null && widget.message.value.self == true) {
+      return Alignment.centerRight;
+    } else if (message.self != null && message.self == false) {
+      return Alignment.centerLeft;
+    } else if (message.self == null && message.type == MessageType.system) {
+      return Alignment.center;
+    }
+    return null;
   }
 
   Widget? _messageWidgetProvider(Message message) {
@@ -142,6 +165,9 @@ class _MessageBuilderState extends State<MessageBuilder> {
         return AudioMessageWidget(message: message);
       case MessageType.image:
         return ImageMessageWidget(message: message as ImageMessage);
+      case MessageType.file:
+        message as FileMessage;
+        return FileMessageWidget(message: message);
       default:
         return null;
     }
@@ -158,7 +184,8 @@ class _MessageBuilderState extends State<MessageBuilder> {
   }
 
   Color _bubbleColorGiver(Message message) {
-    if (["text", 'audio', 'video', 'image'].contains(message.type.name)) {
+    if (["text", 'audio', 'video', 'image', 'file']
+        .contains(message.type.name)) {
       return widget.message.value.self == true
           ? InheritedProperties.of(context).theme.sentMessageBubbleColor
           : InheritedProperties.of(context).theme.receivedMessageBubbleColor;

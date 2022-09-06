@@ -77,7 +77,6 @@ class _InputBarState extends State<InputBar> {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.audio,
     );
-
     print(result!.files.first.bytes);
   }
 
@@ -98,13 +97,32 @@ class _InputBarState extends State<InputBar> {
     }
   }
 
-  Future _getFile() async {
+  Future _getFile(
+    User author,
+    Message? repliedMessage,
+  ) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
+      type: FileType.any,
       allowMultiple: true,
-      allowedExtensions: ['jpg', 'pdf', 'doc'],
     );
-    if (result != null) {}
+    if (result != null) {
+      // result.files.map((file) {
+
+      // print(result.count);
+
+      _handleSendPressed(FileMessage(
+        author: author,
+        name: result.files.first.name,
+        size: result.files.first.size,
+        uri: 'http://www.africau.edu/images/default/sample.pdf',
+        id: uuid.v4(),
+        self: true,
+        repliedMessage: repliedMessage,
+        mimeType: result.files.first.extension,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+      ));
+      // });
+    }
   }
 
   @override
@@ -124,13 +142,25 @@ class _InputBarState extends State<InputBar> {
             color: Color(0xff005fff),
           ),
           title: 'Audio',
-          onTap: () async {}),
+          onTap: () async {
+            InheritedMessagesWidget.of(context).messages[0].message.value =
+                InheritedMessagesWidget.of(context)
+                    .messages[Random().nextInt(
+                        InheritedMessagesWidget.of(context).messages.length -
+                            1)]
+                    .message
+                    .value
+                    .copyWith(status: Status.values[Random().nextInt(4)]);
+          }),
       SharingOption(
           icon: const Icon(CupertinoIcons.doc_text_fill,
               color: Color(0xff005fff)),
           title: 'Documents',
           onTap: () {
-            _getFile();
+            _getFile(
+              InheritedProperties.of(context).author,
+              InheritedProperties.of(context).tagHelper.tagNotifier.value,
+            );
           }),
       SharingOption(
           icon: const Icon(
@@ -184,7 +214,7 @@ class _InputBarState extends State<InputBar> {
                           .tagNotifier
                           .value,
                       createdAt: DateTime.now().millisecondsSinceEpoch,
-                      self: Random().nextBool(),
+                      self: true,
                     ));
                   } else if (kIsWeb &&
                       event.isAltPressed &&

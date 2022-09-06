@@ -23,4 +23,11 @@ const Uuid uuid = Uuid();
 
 RegExp exp = RegExp(r'(?:(?:https?|ftp):)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
 
-
+String getFileSize(int bytesLength, int decimals) {
+  // var file = File(filepath);
+  int bytes = bytesLength;
+  if (bytes <= 0) return "0 B";
+  const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  var i = (log(bytes) / log(1024)).floor();
+  return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
+}

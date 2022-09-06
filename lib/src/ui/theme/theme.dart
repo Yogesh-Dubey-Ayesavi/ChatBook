@@ -24,8 +24,10 @@ abstract class ChatTheme {
   final TextStyle labelTextStyle;
   final TextStyle subtitleTextStyle;
   final TextStyle captionTextStyle;
+  final TextStyle systemMessageTextStyle;
 
   const ChatTheme({
+    required this.systemMessageTextStyle,
     required this.chatBackGroundColor,
     required this.sentMessageBubbleColor,
     required this.receivedMessageBubbleColor,

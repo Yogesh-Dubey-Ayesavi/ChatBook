@@ -1,7 +1,5 @@
 part of '../../../chatbook.dart';
 
-
-
 class PatternStyle {
   PatternStyle(this.from, this.regExp, this.replace, this.textStyle);
 

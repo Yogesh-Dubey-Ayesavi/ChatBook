@@ -8,14 +8,42 @@ import 'package:giphy_get/giphy_get.dart';
 import 'package:giphy_get/l10n.dart';
 import "package:google_fonts/google_fonts.dart" show GoogleFonts;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:isolated_worker/worker_delegator.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
+// Future<void> main() async {
+//   // await JustAudioBackground.init(
+//   //   androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+//   //   androidNotificationChannelName: 'Audio playback',
+//   //   androidNotificationOngoing: true,
+//   // );
+//   runApp(const ChatBookApp());
+// }
+
+int foo(int count) {
+  int result = 0;
+  for (int i = 1; i <= count; i++) {
+    result += i;
+    print(result);
+  }
+  return result;
+}
+
 Future<void> main() async {
-  // await JustAudioBackground.init(
-  //   androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-  //   androidNotificationChannelName: 'Audio playback',
-  //   androidNotificationOngoing: true,
-  // );
+  DefaultDelegate<int, int> fooDelegate = const DefaultDelegate(callback: foo);
+
+  const JsDelegate fooJsDelegate = JsDelegate(callback: 'foo');
+
+  WorkerDelegate<int, int> workerDelegate = WorkerDelegate(
+    key: 'foo',
+    defaultDelegate: fooDelegate,
+    jsDelegate: fooJsDelegate,
+  );
+
+  WorkerDelegator().addDelegate(workerDelegate);
+
+  // Don't forget to call importScripts for our "foo" js method.
+  await WorkerDelegator().importScripts(const <String>['foojs.js']);
   runApp(const ChatBookApp());
 }
 
@@ -52,8 +80,9 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               children: <Widget>[
                 IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
+                  onPressed: () async {
+                    int result = await WorkerDelegator().run('foo', 100000);
+                    print(result);
                   },
                   icon: const Icon(
                     CupertinoIcons.chevron_back,
@@ -112,7 +141,9 @@ class _HomePageState extends State<HomePage> {
                     CupertinoIcons.video_camera,
                     color: Color.fromRGBO(255, 255, 255, .87),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    foo(100000);
+                  },
                 ),
               ],
             ),
@@ -131,102 +162,221 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// import 'dart:typed_data';
+// // import 'dart:typed_data';
 
-// import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-// import 'package:image_editor_plus/image_editor_plus.dart';
+// // import 'package:flutter/material.dart';
+// // import 'package:flutter/services.dart';
+// // import 'package:image_editor_plus/image_editor_plus.dart';
 
-// void main() {
-//   runApp(
-//     const MaterialApp(
-//       home: ImageEditorExample(),
-//     ),
-//   );
-// }
+// // void main() {
+// //   runApp(
+// //     const MaterialApp(
+// //       home: ImageEditorExample(),
+// //     ),
+// //   );
+// // }
 
-// class ImageEditorExample extends StatefulWidget {
+// // class ImageEditorExample extends StatefulWidget {
   
-//   const ImageEditorExample({
-//     Key? key,
-//   }) : super(key: key);
+// //   const ImageEditorExample({
+// //     Key? key,
+// //   }) : super(key: key);
 
-//   @override
-//   _ImageEditorExampleState createState() => _ImageEditorExampleState();
+// //   @override
+// //   _ImageEditorExampleState createState() => _ImageEditorExampleState();
+// // }
+
+// // class _ImageEditorExampleState extends State<ImageEditorExample> {
+// //   Uint8List? imageData;
+
+// //   @override
+// //   void initState() {
+// //     super.initState();
+// //     loadAsset("image.jpg");
+// //   }
+
+// //   void loadAsset(String name) async {
+// //     var data = await rootBundle.load('assets/$name');
+// //     setState(() => imageData = data.buffer.asUint8List());
+// //   }
+
+// //   @override
+// //   Widget build(BuildContext context) {
+// //     return Scaffold(
+// //       appBar: AppBar(
+// //         title: const Text("ImageEditor Example"),
+// //         centerTitle: true,
+// //       ),
+// //       body: Column(
+// //         mainAxisAlignment: MainAxisAlignment.center,
+// //         children: [
+// //           if (imageData != null) Image.memory(imageData!),
+// //           const SizedBox(height: 16),
+// //           ElevatedButton(
+// //             child: const Text("Single image editor"),
+// //             onPressed: () async {
+// //               var editedImage = await Navigator.push(
+// //                 context,
+// //                 MaterialPageRoute(
+// //                   builder: (context) => ImageEditor(
+// //                     image: imageData,
+// //                   ),
+// //                 ),
+// //               );
+
+// //               // replace with edited image
+// //               if (editedImage != null) {
+// //                 imageData = editedImage;
+// //                 setState(() {});
+// //               }
+// //             },
+// //           ),
+// //           ElevatedButton(
+// //             child: const Text("Multiple image editor"),
+// //             onPressed: () async {
+// //               var editedImage = await Navigator.push(
+// //                 context,
+// //                 MaterialPageRoute(
+// //                   builder: (context) => ImageEditor(
+// //                     images: [
+// //                       imageData,
+// //                       imageData,
+// //                     ],
+// //                     allowMultiple: true,
+// //                     allowCamera: true,
+// //                     allowGallery: true,
+// //                   ),
+// //                 ),
+// //               );
+
+// //               // replace with edited image
+// //               if (editedImage != null) {
+// //                 imageData = editedImage;
+// //                 setState(() {});
+// //               }
+// //             },
+// //           ),
+// //         ],
+// //       ),
+// //     );
+// //   }
+// // }
+
+// Copyright Daniil Surnin. All rights reserved.
+// Use of this source code is governed by a Apache license that can be
+// found in the LICENSE file.
+
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/foundation.dart';
+// import 'package:flutter/material.dart';
+// import 'package:worker_manager/worker_manager.dart';
+
+// void main() async {
+//   await Executor().warmUp(log: true);
+//   runApp(MyApp());
 // }
 
-// class _ImageEditorExampleState extends State<ImageEditorExample> {
-//   Uint8List? imageData;
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+
+//       // Performance overlay throws unimplemented for Flutter Web
+//       // showPerformanceOverlay: true,
+//       debugShowCheckedModeBanner: false,
+//       home: MyHomePage(),
+//     );
+//   }
+// }
+
+// class MyHomePage extends StatefulWidget {
+//   const MyHomePage({Key? key}) : super(key: key);
 
 //   @override
-//   void initState() {
-//     super.initState();
-//     loadAsset("image.jpg");
-//   }
+//   _MyHomePageState createState() => _MyHomePageState();
+// }
 
-//   void loadAsset(String name) async {
-//     var data = await rootBundle.load('assets/$name');
-//     setState(() => imageData = data.buffer.asUint8List());
-//   }
+// class _MyHomePageState extends State<MyHomePage> {
+//   final computeResults = [];
+//   final executorResults = [];
+//   var computeTaskRun = 0;
+//   var executorTaskRun = 0;
 
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text("ImageEditor Example"),
-//         centerTitle: true,
-//       ),
-//       body: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           if (imageData != null) Image.memory(imageData!),
-//           const SizedBox(height: 16),
-//           ElevatedButton(
-//             child: const Text("Single image editor"),
-//             onPressed: () async {
-//               var editedImage = await Navigator.push(
-//                 context,
-//                 MaterialPageRoute(
-//                   builder: (context) => ImageEditor(
-//                     image: imageData,
-//                   ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Text("Fibonacci calculation of 43 "),
+//             const CircularProgressIndicator(),
+//             Row(
+//               children: [
+//                 Text(computeTaskRun.toString()),
+//                 Spacer(),
+//                 Text(executorTaskRun.toString()),
+//               ],
+//             ),
+//             const SizedBox(
+//               height: 200,
+//             ),
+//             Text('Results'),
+//             Row(
+//               children: [
+//                 Text(computeResults.length.toString()),
+//                 Spacer(),
+//                 Text(executorResults.length.toString()),
+//               ],
+//             ),
+//             Row(
+//               children: [
+//                 CupertinoButton(
+//                   child: Text('run compute'),
+//                   onPressed: () {
+//                     setState(() {
+//                       computeTaskRun++;
+//                       compute(fibCompute, 43).then((value) {
+//                         setState(() {
+//                           computeResults.add(value);
+//                         });
+//                       });
+//                     });
+//                   },
 //                 ),
-//               );
-
-//               // replace with edited image
-//               if (editedImage != null) {
-//                 imageData = editedImage;
-//                 setState(() {});
-//               }
-//             },
-//           ),
-//           ElevatedButton(
-//             child: const Text("Multiple image editor"),
-//             onPressed: () async {
-//               var editedImage = await Navigator.push(
-//                 context,
-//                 MaterialPageRoute(
-//                   builder: (context) => ImageEditor(
-//                     images: [
-//                       imageData,
-//                       imageData,
-//                     ],
-//                     allowMultiple: true,
-//                     allowCamera: true,
-//                     allowGallery: true,
-//                   ),
-//                 ),
-//               );
-
-//               // replace with edited image
-//               if (editedImage != null) {
-//                 imageData = editedImage;
-//                 setState(() {});
-//               }
-//             },
-//           ),
-//         ],
+//                 Spacer(),
+//                 CupertinoButton(
+//                   child: Text('run executor'),
+//                   onPressed: () {
+//                     setState(() {
+//                       executorTaskRun++;
+//                       Executor().execute(arg1: 43, fun1: fib).then((value) {
+//                         setState(() {
+//                           executorResults.add(value);
+//                         });
+//                       });
+//                     });
+//                   },
+//                 )
+//               ],
+//             ),
+//           ],
+//         ),
 //       ),
 //     );
 //   }
+// }
+
+// int fib(int n, TypeSendPort port) {
+//   if (n < 2) {
+//     return n;
+//   }
+//   return fib(n - 2, port) + fib(n - 1, port);
+// }
+
+// int fibCompute(int n) {
+//   if (n < 2) {
+//     return n;
+//   }
+//   return fibCompute(n - 2) + fibCompute(n - 1);
 // }
